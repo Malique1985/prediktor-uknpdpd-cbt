@@ -22,41 +22,23 @@
             --shadow:     0 4px 20px rgba(0,0,0,.08);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
         /* ── Header ── */
         header {
             background: linear-gradient(135deg, var(--primary-dk) 0%, var(--primary) 100%);
-            color: #fff;
-            padding: 24px 32px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
+            color: #fff; padding: 24px 32px; display: flex; align-items: center; gap: 20px;
             box-shadow: 0 4px 16px rgba(0,0,0,.2);
         }
         .header-icon {
-            width: 56px; height: 56px;
-            background: rgba(255,255,255,.15);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px;
-            flex-shrink: 0;
+            width: 56px; height: 56px; background: rgba(255,255,255,.15); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;
         }
         header h1 { font-size: 1.45rem; font-weight: 700; line-height: 1.2; }
         header p  { font-size: .85rem; opacity: .8; margin-top: 3px; }
         .header-badge {
-            margin-left: auto;
-            background: rgba(255,255,255,.18);
-            border-radius: 8px;
-            padding: 6px 14px;
-            font-size: .8rem;
-            text-align: right;
-            flex-shrink: 0;
+            margin-left: auto; background: rgba(255,255,255,.18); border-radius: 8px;
+            padding: 6px 14px; font-size: .8rem; text-align: right; flex-shrink: 0;
         }
         .header-badge strong { display: block; font-size: 1rem; }
 
@@ -64,147 +46,68 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-        @media(max-width:900px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-4 { grid-template-columns: 1fr 1fr; }
-        }
-        @media(max-width:500px) {
-            .grid-4 { grid-template-columns: 1fr; }
-            header { padding: 16px; flex-wrap: wrap; }
-            .header-badge { margin-left: 0; width: 100%; }
-        }
+        @media(max-width:900px) { .grid-2 { grid-template-columns: 1fr; } .grid-4 { grid-template-columns: 1fr 1fr; } }
+        @media(max-width:500px) { .grid-4 { grid-template-columns: 1fr; } header { padding: 16px; flex-wrap: wrap; } .header-badge { margin-left: 0; width: 100%; } }
 
         /* ── Card ── */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 22px 24px;
-            border: 1px solid var(--border);
-        }
+        .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 24px; border: 1px solid var(--border); }
         .card-title {
-            font-size: .7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            color: var(--muted);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
+            font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+            color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 7px;
         }
-        .card-title::before {
-            content: '';
-            display: inline-block;
-            width: 3px; height: 14px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
+        .card-title::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--primary); border-radius: 2px; }
 
         /* ── Stat Cards ── */
-        .stat-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 18px 20px;
-            border: 1px solid var(--border);
-            border-top: 3px solid var(--primary);
-        }
+        .stat-card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px; border: 1px solid var(--border); border-top: 3px solid var(--primary); }
         .stat-card .label { font-size: .75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
         .stat-card .value { font-size: 1.9rem; font-weight: 800; color: var(--primary); line-height: 1; margin: 5px 0 2px; }
         .stat-card .sub   { font-size: .75rem; color: var(--muted); }
-        .stat-card.green  { border-top-color: var(--accent); }
-        .stat-card.green  .value { color: var(--accent); }
-        .stat-card.orange { border-top-color: var(--warn); }
-        .stat-card.orange .value { color: var(--warn); }
+        .stat-card.green  { border-top-color: var(--accent); } .stat-card.green  .value { color: var(--accent); }
+        .stat-card.orange { border-top-color: var(--warn);   } .stat-card.orange .value { color: var(--warn);   }
 
         /* ── Training Progress ── */
-        .training-status {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px 24px;
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-        .progress-bar-wrap {
-            background: var(--border);
-            border-radius: 99px;
-            height: 10px;
-            overflow: hidden;
-            margin: 10px 0 6px;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #4a9eff);
-            border-radius: 99px;
-            transition: width .3s;
-            width: 0%;
-        }
+        .training-status { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .progress-bar-wrap { background: var(--border); border-radius: 99px; height: 10px; overflow: hidden; margin: 10px 0 6px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), #4a9eff); border-radius: 99px; transition: width .3s; width: 0%; }
         .status-row { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; color: var(--muted); }
-        .status-dot {
-            display: inline-block;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--warn);
-            margin-right: 6px;
-            animation: pulse 1.2s infinite;
-        }
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 6px; animation: pulse 1.2s infinite; }
         .status-dot.done { background: var(--accent); animation: none; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
+        /* ── Mode Selector ── */
+        .mode-selector { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
+        .mode-btn {
+            flex: 1; padding: 10px 8px; border: none; border-radius: 8px; background: transparent;
+            cursor: pointer; font-size: .83rem; font-weight: 600; color: var(--muted);
+            transition: all .2s; line-height: 1.3; text-align: center;
+        }
+        .mode-btn:hover:not(:disabled) { background: rgba(26,86,160,.08); color: var(--primary); }
+        .mode-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(26,86,160,.3); }
+        .mode-btn:disabled { opacity: .4; cursor: not-allowed; }
+        .mode-btn small { display: block; font-size: .68rem; font-weight: 400; opacity: .85; margin-top: 1px; }
+
         /* ── Prediction Form ── */
-        .predict-form {
-            background: linear-gradient(135deg, #f8fbff, #eef4ff);
-            border: 1px solid #ccd9f0;
-        }
+        .predict-form { background: linear-gradient(135deg, #f8fbff, #eef4ff); border: 1px solid #ccd9f0; }
         .input-group { margin-bottom: 16px; }
-        .input-group label {
-            display: block;
-            font-size: .82rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 6px;
-        }
-        .input-group label span {
-            font-size: .75rem;
-            color: var(--muted);
-            font-weight: 400;
-            margin-left: 6px;
-        }
+        .input-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .input-group label span { font-size: .75rem; color: var(--muted); font-weight: 400; margin-left: 6px; }
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .input-row.single { grid-template-columns: 1fr; }
         @media(max-width:500px) { .input-row { grid-template-columns: 1fr; } }
         .score-input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text);
-            background: #fff;
-            transition: border-color .2s, box-shadow .2s;
-            outline: none;
+            width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 8px;
+            font-size: 1.1rem; font-weight: 600; color: var(--text); background: #fff;
+            transition: border-color .2s, box-shadow .2s; outline: none;
         }
-        .score-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26,86,160,.12);
-        }
+        .score-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,86,160,.12); }
         .range-hint { font-size: .7rem; color: var(--muted); margin-top: 4px; }
         .input-slider { width: 100%; margin-top: 4px; accent-color: var(--primary); }
         .btn-predict {
-            width: 100%;
-            padding: 14px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, var(--primary), #2874c5);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform .15s, box-shadow .15s;
-            box-shadow: 0 4px 14px rgba(26,86,160,.35);
-            margin-top: 6px;
+            color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: transform .15s, box-shadow .15s;
+            box-shadow: 0 4px 14px rgba(26,86,160,.35); margin-top: 6px;
         }
         .btn-predict:hover  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,86,160,.45); }
         .btn-predict:active { transform: translateY(0); }
@@ -212,138 +115,64 @@
 
         /* ── Result Cards ── */
         .result-section { display: none; }
-        .result-section.visible {
-            display: grid;
-            grid-template-columns: repeat(3,1fr);
-            gap: 16px;
-        }
+        .result-section.visible { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
         @media(max-width:700px) { .result-section.visible { grid-template-columns: 1fr; } }
-        .result-card {
-            border-radius: var(--radius);
-            padding: 22px;
-            text-align: center;
-            border: 2px solid var(--border);
-            background: #fff;
-            box-shadow: var(--shadow);
-        }
+        .result-card { border-radius: var(--radius); padding: 22px; text-align: center; border: 2px solid var(--border); background: #fff; box-shadow: var(--shadow); }
         .result-card .r-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
         .result-card .r-value { font-size: 2.6rem; font-weight: 900; margin: 8px 0 4px; line-height: 1; }
         .result-card .r-sub   { font-size: .8rem; color: var(--muted); }
-        .result-card.lulus         { border-color: var(--accent); background: #f0faf4; }
-        .result-card.lulus         .r-value { color: var(--accent); }
-        .result-card.tidak-lulus   { border-color: var(--danger); background: #fef5f5; }
-        .result-card.tidak-lulus   .r-value { color: var(--danger); }
-        .result-card.neutral       { border-color: var(--primary); background: #f0f5ff; }
-        .result-card.neutral       .r-value { color: var(--primary); }
-        .result-card.warn          { border-color: var(--warn); background: #fffbf0; }
-        .result-card.warn          .r-value { color: var(--warn); }
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            border-radius: 99px;
-            font-weight: 700;
-            font-size: .95rem;
-            margin-top: 8px;
-        }
+        .result-card.lulus       { border-color: var(--accent); background: #f0faf4; } .result-card.lulus       .r-value { color: var(--accent); }
+        .result-card.tidak-lulus { border-color: var(--danger); background: #fef5f5; } .result-card.tidak-lulus .r-value { color: var(--danger); }
+        .result-card.neutral     { border-color: var(--primary); background: #f0f5ff; } .result-card.neutral     .r-value { color: var(--primary); }
+        .result-card.warn        { border-color: var(--warn);    background: #fffbf0; } .result-card.warn        .r-value { color: var(--warn); }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 99px; font-weight: 700; font-size: .95rem; margin-top: 8px; }
         .badge-lulus { background: var(--accent); color: #fff; }
         .badge-tidak { background: var(--danger); color: #fff; }
 
         /* ── Recommendation ── */
-        .recommendation {
-            background: #fffbf0;
-            border: 1px solid #f0d080;
-            border-left: 4px solid var(--warn);
-            border-radius: 8px;
-            padding: 14px 18px;
-            font-size: .85rem;
-            margin-top: 16px;
-            line-height: 1.6;
-        }
-        .recommendation.good {
-            background: #f0faf4;
-            border-color: #a8dfc0;
-            border-left-color: var(--accent);
-        }
+        .recommendation { background: #fffbf0; border: 1px solid #f0d080; border-left: 4px solid var(--warn); border-radius: 8px; padding: 14px 18px; font-size: .85rem; margin-top: 16px; line-height: 1.6; }
+        .recommendation.good { background: #f0faf4; border-color: #a8dfc0; border-left-color: var(--accent); }
         .recommendation strong { display: block; margin-bottom: 6px; font-size: .9rem; }
 
         /* ── Charts ── */
         .chart-wrap { position: relative; height: 280px; }
 
         /* ── Model Metrics ── */
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 9px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: .86rem;
-        }
+        .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: .86rem; }
         .metric-row:last-child { border-bottom: none; }
         .metric-row .name { color: var(--muted); }
         .metric-row .val  { font-weight: 700; color: var(--text); }
         .metric-row .val.good { color: var(--accent); }
 
+        /* ── Model compare badges ── */
+        .model-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+        .mbadge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 99px; font-size: .72rem; font-weight: 700; border: 1.5px solid; }
+        .mbadge-toi  { border-color: #3498db; color: #2980b9; background: #eaf4fd; }
+        .mbadge-toa  { border-color: #9b59b6; color: #8e44ad; background: #f5eef8; }
+        .mbadge-both { border-color: #27ae60; color: #1e8449; background: #eafaf1; }
+        .mbadge.active-badge { color: #fff; }
+        .mbadge-toi.active-badge  { background: #3498db; }
+        .mbadge-toa.active-badge  { background: #9b59b6; }
+        .mbadge-both.active-badge { background: #27ae60; }
+
         /* ── Data Table ── */
-        .table-wrap {
-            overflow-x: auto;
-            max-height: 420px;
-            overflow-y: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
+        .table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; font-size: .82rem; }
-        thead th {
-            background: var(--primary);
-            color: #fff;
-            padding: 10px 12px;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+        thead th { background: var(--primary); color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; position: sticky; top: 0; z-index: 1; }
         tbody tr:nth-child(even) { background: #f8fafd; }
         tbody tr:hover { background: #eef3fb; }
         tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-        .pill {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 99px;
-            font-size: .72rem;
-            font-weight: 700;
-        }
+        .pill { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
         .pill-lulus { background: #d4f4e3; color: #1a7a43; }
         .pill-tidak { background: #fde0dc; color: #c0392b; }
 
         /* ── Toggle ── */
-        .toggle-btn {
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 5px 12px;
-            font-size: .78rem;
-            cursor: pointer;
-            color: var(--primary);
-            margin-left: auto;
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+        .toggle-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: .78rem; cursor: pointer; color: var(--primary); margin-left: auto; display: block; margin-bottom: 10px; font-weight: 600; }
         .toggle-btn:hover { background: var(--bg); }
 
         /* ── Section spacing ── */
         section + section { margin-top: 24px; }
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .section-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
         .section-title .icon { font-size: 1.1rem; }
     </style>
 </head>
@@ -368,9 +197,9 @@
         <div class="status-row">
             <div>
                 <span class="status-dot" id="statusDot"></span>
-                <strong id="statusText">Memuat dan melatih model...</strong>
+                <strong id="statusText">Memuat dan melatih 3 model...</strong>
             </div>
-            <span id="epochLabel" style="font-size:.82rem;color:var(--muted)">Epoch 0 / 300</span>
+            <span id="epochLabel" style="font-size:.82rem;color:var(--muted)">Model 1/3 · Epoch 0/300</span>
         </div>
         <div class="progress-bar-wrap">
             <div class="progress-bar" id="progressBar"></div>
@@ -400,22 +229,40 @@
                 <div class="sub" id="minMaxCbtStat">Min – Maks: –</div>
             </div>
             <div class="stat-card">
-                <div class="label">Akurasi Model (R²)</div>
+                <div class="label">Akurasi Model Aktif (R²)</div>
                 <div class="value" id="r2Stat">–</div>
-                <div class="sub">Koefisien Determinasi</div>
+                <div class="sub" id="r2StatSub">Koefisien Determinasi</div>
             </div>
         </div>
     </section>
 
-    <!-- Main Content: Form + Metrics -->
+    <!-- Main: Form + Metrics -->
     <section>
         <div class="grid-2">
 
-            <!-- Left: Prediction Form -->
+            <!-- Prediction Form -->
             <div class="card predict-form">
-                <div class="card-title">Input Nilai & Prediksi</div>
-                <div class="input-row">
-                    <div class="input-group">
+                <div class="card-title">Pilih Mode Input & Prediksi</div>
+
+                <!-- Mode Selector -->
+                <div class="mode-selector" id="modeSelector">
+                    <button class="mode-btn" data-mode="toi" onclick="switchMode('toi')" disabled>
+                        📊 Nilai TOI Saja
+                        <small>Tryout Internal</small>
+                    </button>
+                    <button class="mode-btn" data-mode="toa" onclick="switchMode('toa')" disabled>
+                        📋 Nilai TOA Saja
+                        <small>Tryout AIPKI</small>
+                    </button>
+                    <button class="mode-btn active" data-mode="both" onclick="switchMode('both')" disabled>
+                        🔢 TOI + TOA
+                        <small>Kedua Nilai</small>
+                    </button>
+                </div>
+
+                <!-- Inputs -->
+                <div class="input-row" id="inputRow">
+                    <div class="input-group" id="toiGroup">
                         <label>Nilai TOI <span>(Tryout Internal)</span></label>
                         <input type="number" class="score-input" id="toiInput"
                                min="0" max="100" step="0.5" placeholder="cth. 68.5"
@@ -425,7 +272,7 @@
                                oninput="syncInput('toi')">
                         <div class="range-hint">Rentang dataset: 42 – 81.5</div>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group" id="toaGroup">
                         <label>Nilai TOA <span>(Tryout AIPKI)</span></label>
                         <input type="number" class="score-input" id="toaInput"
                                min="0" max="100" step="0.5" placeholder="cth. 65.0"
@@ -436,41 +283,47 @@
                         <div class="range-hint">Rentang dataset: 39.5 – 84</div>
                     </div>
                 </div>
+
                 <button class="btn-predict" id="btnPredict" onclick="predict()" disabled>
                     ⏳ Menunggu model selesai dilatih...
                 </button>
             </div>
 
-            <!-- Right: Model Info & Metrics -->
+            <!-- Metrics Panel -->
             <div class="card">
-                <div class="card-title">Performa & Detail Model</div>
+                <div class="card-title">Performa Model Aktif</div>
+                <div class="model-badges" id="modelBadges">
+                    <span class="mbadge mbadge-toi" id="badgeToi">📊 Model TOI</span>
+                    <span class="mbadge mbadge-toa" id="badgeToa">📋 Model TOA</span>
+                    <span class="mbadge mbadge-both active-badge" id="badgeBoth">🔢 Model TOI+TOA</span>
+                </div>
                 <div class="metric-row">
                     <span class="name">Algoritma</span>
                     <span class="val">Neural Network (TF.js)</span>
                 </div>
                 <div class="metric-row">
                     <span class="name">Arsitektur Layer</span>
-                    <span class="val">2 → 32 → 16 → 1</span>
+                    <span class="val" id="metaArch">2 → 32 → 16 → 1</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Fitur Input</span>
+                    <span class="val" id="metaFitur">TOI + TOA</span>
                 </div>
                 <div class="metric-row">
                     <span class="name">Optimizer / LR</span>
                     <span class="val">Adam · 0.005</span>
                 </div>
                 <div class="metric-row">
-                    <span class="name">Loss Function</span>
-                    <span class="val">Mean Squared Error</span>
-                </div>
-                <div class="metric-row">
                     <span class="name">R² Score</span>
-                    <span class="val good" id="r2Val">Menghitung…</span>
+                    <span class="val good" id="r2Val">–</span>
                 </div>
                 <div class="metric-row">
-                    <span class="name">MAE (Mean Abs Error)</span>
-                    <span class="val" id="maeVal">Menghitung…</span>
+                    <span class="name">MAE</span>
+                    <span class="val" id="maeVal">–</span>
                 </div>
                 <div class="metric-row">
                     <span class="name">RMSE</span>
-                    <span class="val" id="rmseVal">Menghitung…</span>
+                    <span class="val" id="rmseVal">–</span>
                 </div>
                 <div class="metric-row">
                     <span class="name">Korelasi TOI–CBT</span>
@@ -488,7 +341,7 @@
     <section>
         <div class="section-title"><span class="icon">📊</span>Hasil Prediksi</div>
         <div class="result-section" id="resultSection">
-            <div class="result-card neutral" id="resCardCbt">
+            <div class="result-card neutral">
                 <div class="r-label">Prediksi Nilai CBT</div>
                 <div class="r-value" id="resCbt">–</div>
                 <div class="r-sub">Batas kelulusan: 66.00</div>
@@ -527,7 +380,7 @@
                 <div class="chart-wrap"><canvas id="chartHist"></canvas></div>
             </div>
             <div class="card">
-                <div class="card-title">Nilai Aktual vs Prediksi Model</div>
+                <div class="card-title" id="predChartTitle">Aktual vs Prediksi · Model TOI+TOA</div>
                 <div class="chart-wrap"><canvas id="chartPred"></canvas></div>
             </div>
         </div>
@@ -542,14 +395,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>TOI</th>
-                            <th>TOA</th>
+                            <th>No</th><th>Nama</th><th>TOI</th><th>TOA</th>
                             <th>CBT Aktual</th>
-                            <th>CBT Prediksi</th>
-                            <th>Error</th>
-                            <th>Status</th>
+                            <th id="thPred">Prediksi (TOI+TOA)</th>
+                            <th>Error</th><th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -562,14 +411,10 @@
         Prediktor Kelulusan UKNPDPD CBT · FKIK UIN Maulana Malik Ibrahim Malang ·
         162 Mahasiswa Program Profesi Dokter · Batas Kelulusan CBT ≥ 66
     </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// DATASET — 162 mahasiswa profesi dokter FKIK UIN Malang
-// Format: [nama, TOI, TOA, CBT]  |  No.90 dikeluarkan (CBT tidak tersedia)
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Dataset ──────────────────────────────────────────────────────────────────
 const DATASET = [
   ["Vicky Andrean",                       67.50, 71.50, 83.00],
   ["Fahrurrozi Hari P",                   62.00, 56.00, 79.50],
@@ -738,400 +583,410 @@ const DATASET = [
 const PASS_THRESHOLD = 66.0;
 const EPOCHS = 300;
 
-let tfModel       = null;
-let normParams    = {};
-let predictions   = [];
+// ─── State ────────────────────────────────────────────────────────────────────
+const models  = { toi: null, toa: null, both: null };
+const norms   = { toi: {}, toa: {}, both: {} };
+const preds   = { toi: [], toa: [], both: [] };
+const metrics = { toi: {}, toa: {}, both: {} };
+
+const META = {
+    toi:  { arch: '1 → 16 → 8 → 1', label: 'TOI Saja',   inputShape: [1] },
+    toa:  { arch: '1 → 16 → 8 → 1', label: 'TOA Saja',   inputShape: [1] },
+    both: { arch: '2 → 32 → 16 → 1', label: 'TOI + TOA', inputShape: [2] },
+};
+
+let currentMode = 'both';
 let chartToi, chartToa, chartHist, chartPred;
 
-// ─── Basic Statistics ─────────────────────────────────────────────────────────
+// ─── Stats ────────────────────────────────────────────────────────────────────
 const tois = DATASET.map(d => d[1]);
 const toas = DATASET.map(d => d[2]);
 const cbts = DATASET.map(d => d[3]);
 
-function mean(arr)  { return arr.reduce((a, b) => a + b, 0) / arr.length; }
-function std(arr)   {
-    const m = mean(arr);
-    return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
-}
+function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function std(arr)  { const m = mean(arr); return Math.sqrt(arr.reduce((a, b) => a + (b-m)**2, 0) / arr.length); }
 function pearsonCorr(x, y) {
     const mx = mean(x), my = mean(y), sx = std(x), sy = std(y);
     return x.reduce((a, xi, i) => a + (xi - mx) * (y[i] - my), 0) / (x.length * sx * sy);
 }
 
-const passCount   = cbts.filter(c => c >= PASS_THRESHOLD).length;
-const passRate    = (passCount / cbts.length * 100).toFixed(1);
-const avgCbt      = mean(cbts).toFixed(2);
-const minCbt      = Math.min(...cbts);
-const maxCbt      = Math.max(...cbts);
-const corrToiCbt  = pearsonCorr(tois, cbts);
-const corrToaCbt  = pearsonCorr(toas, cbts);
+const passCount  = cbts.filter(c => c >= PASS_THRESHOLD).length;
+const corrToiCbt = pearsonCorr(tois, cbts);
+const corrToaCbt = pearsonCorr(toas, cbts);
+const minCbt     = Math.min(...cbts);
+const maxCbt     = Math.max(...cbts);
 
-document.getElementById('passRateStat').textContent   = passRate + '%';
-document.getElementById('avgCbtStat').textContent     = avgCbt;
-document.getElementById('minMaxCbtStat').textContent  = `Min–Maks: ${minCbt.toFixed(2)}–${maxCbt.toFixed(2)}`;
-document.getElementById('corrToi').textContent        = corrToiCbt.toFixed(4);
-document.getElementById('corrToa').textContent        = corrToaCbt.toFixed(4);
+document.getElementById('passRateStat').textContent  = (passCount / cbts.length * 100).toFixed(1) + '%';
+document.getElementById('avgCbtStat').textContent    = mean(cbts).toFixed(2);
+document.getElementById('minMaxCbtStat').textContent = `Min–Maks: ${minCbt.toFixed(2)}–${maxCbt.toFixed(2)}`;
+document.getElementById('corrToi').textContent       = corrToiCbt.toFixed(4);
+document.getElementById('corrToa').textContent       = corrToaCbt.toFixed(4);
 
 // ─── Normalization ────────────────────────────────────────────────────────────
-function computeNormParams(arr) { return { mu: mean(arr), sigma: std(arr) }; }
-function normalize(v, p)   { return (v - p.mu) / p.sigma; }
-function denormalize(v, p) { return v * p.sigma + p.mu; }
+function normOf(arr)      { return { mu: mean(arr), sigma: std(arr) }; }
+function norm(v, p)       { return (v - p.mu) / p.sigma; }
+function denorm(v, p)     { return v * p.sigma + p.mu; }
 
-// ─── Build & Train TF.js Model ───────────────────────────────────────────────
-async function buildAndTrain() {
-    normParams.toi = computeNormParams(tois);
-    normParams.toa = computeNormParams(toas);
-    normParams.cbt = computeNormParams(cbts);
-
-    const xs = tf.tensor2d(DATASET.map(d => [
-        normalize(d[1], normParams.toi),
-        normalize(d[2], normParams.toa)
-    ]));
-    const ys = tf.tensor2d(DATASET.map(d => [
-        normalize(d[3], normParams.cbt)
-    ]));
-
-    tfModel = tf.sequential({
+// ─── Build one model ──────────────────────────────────────────────────────────
+function buildModel(inputDim) {
+    const isBig = inputDim === 2;
+    return tf.sequential({
         layers: [
             tf.layers.dense({
-                units: 32, activation: 'relu', inputShape: [2],
+                units: isBig ? 32 : 16, activation: 'relu', inputShape: [inputDim],
                 kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
             }),
             tf.layers.dense({
-                units: 16, activation: 'relu',
+                units: isBig ? 16 : 8, activation: 'relu',
                 kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
             }),
             tf.layers.dense({ units: 1 })
         ]
     });
+}
 
-    tfModel.compile({
-        optimizer: tf.train.adam(0.005),
-        loss: 'meanSquaredError'
-    });
-
-    const startTime = Date.now();
-
-    await tfModel.fit(xs, ys, {
-        epochs: EPOCHS,
-        batchSize: 16,
-        shuffle: true,
-        callbacks: {
-            onEpochEnd: (epoch, logs) => {
-                const pct = ((epoch + 1) / EPOCHS * 100);
-                document.getElementById('progressBar').style.width = pct.toFixed(0) + '%';
-                document.getElementById('epochLabel').textContent  = `Epoch ${epoch + 1} / ${EPOCHS}`;
-                document.getElementById('lossLabel').textContent   = `Loss: ${logs.loss.toFixed(5)}`;
-                document.getElementById('timeLabel').textContent   = `Waktu: ${((Date.now() - startTime) / 1000).toFixed(1)}s`;
-            }
-        }
-    });
-
-    // Generate predictions for all training samples
-    const predTensor = tfModel.predict(xs);
-    const predRaw    = await predTensor.data();
-    predictions      = Array.from(predRaw).map(v => denormalize(v, normParams.cbt));
-
-    xs.dispose(); ys.dispose(); predTensor.dispose();
-
-    // Compute evaluation metrics
-    const residuals = predictions.map((p, i) => p - cbts[i]);
+function evalMetrics(predsArr, actuals) {
+    const residuals = predsArr.map((p, i) => p - actuals[i]);
     const mae       = mean(residuals.map(r => Math.abs(r)));
     const rmse      = Math.sqrt(mean(residuals.map(r => r * r)));
-    const ssTot     = cbts.reduce((a, c) => a + (c - mean(cbts)) ** 2, 0);
+    const ssTot     = actuals.reduce((a, c) => a + (c - mean(actuals)) ** 2, 0);
     const ssRes     = residuals.reduce((a, r) => a + r * r, 0);
     const r2        = 1 - ssRes / ssTot;
+    const residStd  = std(residuals);
+    return { mae, rmse, r2, residStd };
+}
 
-    normParams.residualStd = std(residuals);
+// ─── Train all 3 models ───────────────────────────────────────────────────────
+async function buildAndTrain() {
+    const startTime = Date.now();
 
-    document.getElementById('r2Val').textContent   = r2.toFixed(4);
-    document.getElementById('maeVal').textContent  = mae.toFixed(3) + ' poin';
-    document.getElementById('rmseVal').textContent = rmse.toFixed(3) + ' poin';
-    document.getElementById('r2Stat').textContent  = r2.toFixed(3);
+    // Shared CBT norm
+    const cbtNorm = normOf(cbts);
 
-    // Update training status
+    // ── Model configs ──
+    const configs = [
+        {
+            key: 'toi',
+            xs: DATASET.map(d => [norm(d[1], normOf(tois))]),
+            setup: () => { norms.toi.x = normOf(tois); norms.toi.cbt = cbtNorm; }
+        },
+        {
+            key: 'toa',
+            xs: DATASET.map(d => [norm(d[2], normOf(toas))]),
+            setup: () => { norms.toa.x = normOf(toas); norms.toa.cbt = cbtNorm; }
+        },
+        {
+            key: 'both',
+            xs: DATASET.map(d => [norm(d[1], normOf(tois)), norm(d[2], normOf(toas))]),
+            setup: () => { norms.both.toi = normOf(tois); norms.both.toa = normOf(toas); norms.both.cbt = cbtNorm; }
+        },
+    ];
+
+    const ys = tf.tensor2d(DATASET.map(d => [norm(d[3], cbtNorm)]));
+    const totalEpochs = EPOCHS * configs.length;
+
+    for (let ci = 0; ci < configs.length; ci++) {
+        const { key, xs: xsData, setup } = configs[ci];
+        setup();
+
+        const xsTensor = tf.tensor2d(xsData);
+        const m = buildModel(xsData[0].length);
+        m.compile({ optimizer: tf.train.adam(0.005), loss: 'meanSquaredError' });
+        models[key] = m;
+
+        document.getElementById('statusText').textContent =
+            `Melatih Model ${ci+1}/3: ${META[key].label}...`;
+
+        await m.fit(xsTensor, ys, {
+            epochs: EPOCHS, batchSize: 16, shuffle: true,
+            callbacks: {
+                onEpochEnd: (epoch, logs) => {
+                    const done = ci * EPOCHS + (epoch + 1);
+                    const pct  = (done / totalEpochs * 100).toFixed(0);
+                    document.getElementById('progressBar').style.width = pct + '%';
+                    document.getElementById('epochLabel').textContent  =
+                        `Model ${ci+1}/3 · Epoch ${epoch+1}/${EPOCHS}`;
+                    document.getElementById('lossLabel').textContent   = `Loss: ${logs.loss.toFixed(5)}`;
+                    document.getElementById('timeLabel').textContent   =
+                        `Waktu: ${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+                }
+            }
+        });
+
+        // Store predictions
+        const outTensor = m.predict(xsTensor);
+        const outRaw    = await outTensor.data();
+        preds[key] = Array.from(outRaw).map(v => denorm(v, cbtNorm));
+        outTensor.dispose();
+        xsTensor.dispose();
+
+        // Store metrics
+        const ev = evalMetrics(preds[key], cbts);
+        metrics[key] = ev;
+    }
+
+    ys.dispose();
+
+    // Done
     document.getElementById('statusDot').classList.add('done');
-    document.getElementById('statusText').textContent = 'Model selesai dilatih — siap melakukan prediksi';
+    document.getElementById('statusText').textContent = '3 model selesai dilatih — pilih mode & prediksi';
     document.getElementById('btnPredict').disabled    = false;
     document.getElementById('btnPredict').textContent = '🔮 Prediksi Nilai CBT';
+    document.querySelectorAll('.mode-btn').forEach(b => b.disabled = false);
 
+    updateMetricsDisplay();
     drawCharts();
     buildTable();
 }
 
-// ─── Prediction ──────────────────────────────────────────────────────────────
-async function predict() {
-    const toi = parseFloat(document.getElementById('toiInput').value);
-    const toa = parseFloat(document.getElementById('toaInput').value);
+// ─── Mode switcher ────────────────────────────────────────────────────────────
+function switchMode(mode) {
+    if (mode === currentMode) return;
+    currentMode = mode;
 
-    if (isNaN(toi) || isNaN(toa) || toi < 0 || toi > 100 || toa < 0 || toa > 100) {
-        alert('Masukkan nilai TOI dan TOA yang valid (0 – 100).');
-        return;
+    // Update buttons
+    document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === mode);
+    });
+
+    // Show/hide input groups & set grid class
+    const toiGroup = document.getElementById('toiGroup');
+    const toaGroup = document.getElementById('toaGroup');
+    const inputRow = document.getElementById('inputRow');
+
+    toiGroup.style.display = (mode === 'toa')  ? 'none' : '';
+    toaGroup.style.display = (mode === 'toi')  ? 'none' : '';
+    inputRow.className = (mode === 'both') ? 'input-row' : 'input-row single';
+
+    updateMetricsDisplay();
+    rebuildTable();
+    updatePredChart();
+
+    // Hide old result
+    document.getElementById('resultSection').className = 'result-section';
+    document.getElementById('recBox').style.display = 'none';
+}
+
+function updateMetricsDisplay() {
+    const m  = metrics[currentMode] || {};
+    const mt = META[currentMode];
+
+    document.getElementById('metaArch').textContent  = mt.arch;
+    document.getElementById('metaFitur').textContent = mt.label;
+    document.getElementById('r2Val').textContent     = m.r2  !== undefined ? m.r2.toFixed(4)  : '–';
+    document.getElementById('maeVal').textContent    = m.mae !== undefined ? m.mae.toFixed(3) + ' poin' : '–';
+    document.getElementById('rmseVal').textContent   = m.rmse!== undefined ? m.rmse.toFixed(3)+ ' poin' : '–';
+    document.getElementById('r2Stat').textContent    = m.r2  !== undefined ? m.r2.toFixed(3)  : '–';
+    document.getElementById('r2StatSub').textContent = `Model ${mt.label}`;
+
+    // Update badges
+    ['toi','toa','both'].forEach(k => {
+        const el = document.getElementById('badge' + k.charAt(0).toUpperCase() + k.slice(1));
+        el.classList.toggle('active-badge', k === currentMode);
+    });
+
+    // Update pred chart title & table header
+    document.getElementById('predChartTitle').textContent =
+        `Aktual vs Prediksi · Model ${mt.label}`;
+    document.getElementById('thPred').textContent =
+        `Prediksi (${mt.label})`;
+}
+
+// ─── Prediction ───────────────────────────────────────────────────────────────
+async function predict() {
+    const toiVal = parseFloat(document.getElementById('toiInput').value);
+    const toaVal = parseFloat(document.getElementById('toaInput').value);
+    const mode   = currentMode;
+
+    if (mode !== 'toa' && (isNaN(toiVal) || toiVal < 0 || toiVal > 100)) {
+        alert('Masukkan nilai TOI yang valid (0–100).'); return;
+    }
+    if (mode !== 'toi' && (isNaN(toaVal) || toaVal < 0 || toaVal > 100)) {
+        alert('Masukkan nilai TOA yang valid (0–100).'); return;
     }
 
-    const inputTensor = tf.tensor2d([[
-        normalize(toi, normParams.toi),
-        normalize(toa, normParams.toa)
-    ]]);
-    const outTensor = tfModel.predict(inputTensor);
-    const outRaw    = await outTensor.data();
+    let inputArr;
+    if (mode === 'toi') {
+        inputArr = [[norm(toiVal, norms.toi.x)]];
+    } else if (mode === 'toa') {
+        inputArr = [[norm(toaVal, norms.toa.x)]];
+    } else {
+        inputArr = [[norm(toiVal, norms.both.toi), norm(toaVal, norms.both.toa)]];
+    }
+
+    const inputTensor = tf.tensor2d(inputArr);
+    const outTensor   = models[mode].predict(inputTensor);
+    const outRaw      = await outTensor.data();
     inputTensor.dispose(); outTensor.dispose();
 
-    const predCbt = denormalize(outRaw[0], normParams.cbt);
-    const sigma   = normParams.residualStd;
+    const predCbt = denorm(outRaw[0], norms[mode === 'toi' ? 'toi' : mode === 'toa' ? 'toa' : 'both'].cbt);
+    const sigma   = metrics[mode].residStd;
     const z       = (PASS_THRESHOLD - predCbt) / sigma;
     const prob    = 1 - normalCDF(z);
 
-    showResult(toi, toa, predCbt, prob);
-    updateChartMarkers(toi, toa, predCbt);
+    showResult(mode, toiVal, toaVal, predCbt, prob);
+    updateChartMarkers(mode, toiVal, toaVal, predCbt);
 }
 
-// Standard normal CDF (Abramowitz & Stegun)
 function normalCDF(z) {
     const sign = z < 0 ? -1 : 1;
     const t    = 1 / (1 + 0.2316419 * Math.abs(z));
-    const poly = t * (0.319381530 + t * (-0.356563782 +
-                 t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-    const pdf  = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
-    return 0.5 + sign * (0.5 - pdf * poly);
+    const poly = t*(0.319381530 + t*(-0.356563782 + t*(1.781477937 + t*(-1.821255978 + t*1.330274429))));
+    return 0.5 + sign * (0.5 - Math.exp(-0.5*z*z)/Math.sqrt(2*Math.PI) * poly);
 }
 
-function showResult(toi, toa, predCbt, prob) {
+function showResult(mode, toiVal, toaVal, predCbt, prob) {
     const pass    = predCbt >= PASS_THRESHOLD;
     const probPct = (prob * 100).toFixed(1);
+    const mLabel  = META[mode].label;
 
     document.getElementById('resCbt').textContent = predCbt.toFixed(2);
 
     const probCard = document.getElementById('resCardProb');
     document.getElementById('resProb').textContent    = probPct + '%';
-    document.getElementById('resProbSub').textContent = prob >= 0.9 ? 'Sangat Tinggi' :
-                                                         prob >= 0.7 ? 'Tinggi' :
-                                                         prob >= 0.5 ? 'Sedang' :
-                                                         prob >= 0.3 ? 'Rendah' : 'Sangat Rendah';
-    probCard.className = 'result-card ' +
-        (prob >= 0.7 ? 'lulus' : prob >= 0.4 ? 'warn' : 'tidak-lulus');
+    document.getElementById('resProbSub').textContent = prob >= 0.9 ? 'Sangat Tinggi' : prob >= 0.7 ? 'Tinggi' : prob >= 0.5 ? 'Sedang' : prob >= 0.3 ? 'Rendah' : 'Sangat Rendah';
+    probCard.className = 'result-card ' + (prob >= 0.7 ? 'lulus' : prob >= 0.4 ? 'warn' : 'tidak-lulus');
 
     const statusCard = document.getElementById('resCardStatus');
     document.getElementById('resStatus').textContent    = pass ? '✓ LULUS' : '✗ TIDAK LULUS';
-    document.getElementById('resStatusSub').textContent = `CBT prediksi: ${predCbt.toFixed(2)} (min: ${PASS_THRESHOLD})`;
+    document.getElementById('resStatusSub').textContent = `Model: ${mLabel} · CBT prediksi: ${predCbt.toFixed(2)}`;
     document.getElementById('resBadge').innerHTML       =
-        `<span class="status-badge ${pass ? 'badge-lulus' : 'badge-tidak'}">
-            ${pass ? '🎓 Prediksi Lulus' : '⚠️ Perlu Peningkatan'}
-         </span>`;
+        `<span class="status-badge ${pass ? 'badge-lulus' : 'badge-tidak'}">${pass ? '🎓 Prediksi Lulus' : '⚠️ Perlu Peningkatan'}</span>`;
     statusCard.className = 'result-card ' + (pass ? 'lulus' : 'tidak-lulus');
 
+    const inputInfo = mode === 'toi' ? `TOI ${toiVal}` : mode === 'toa' ? `TOA ${toaVal}` : `TOI ${toiVal} dan TOA ${toaVal}`;
     const recBox = document.getElementById('recBox');
     recBox.style.display = 'block';
 
     if (pass && prob >= 0.80) {
         recBox.className = 'recommendation good';
-        recBox.innerHTML = `<strong>✅ Prediksi LULUS dengan peluang tinggi (${probPct}%)</strong>
-            Nilai TOI ${toi} dan TOA ${toa} menghasilkan prediksi CBT ${predCbt.toFixed(2)} — di atas batas kelulusan.
-            Pertahankan strategi belajar yang sudah berjalan dan tetap konsisten latihan soal.`;
+        recBox.innerHTML = `<strong>✅ Prediksi LULUS dengan peluang tinggi (${probPct}%) · Model ${mLabel}</strong>
+            Nilai ${inputInfo} menghasilkan prediksi CBT ${predCbt.toFixed(2)} — di atas batas kelulusan.
+            Pertahankan strategi belajar yang sudah berjalan dengan baik.`;
     } else if (pass) {
         recBox.className = 'recommendation good';
-        recBox.innerHTML = `<strong>🟡 Prediksi LULUS, namun peluang masih perlu ditingkatkan (${probPct}%)</strong>
-            Nilai CBT prediksi ${predCbt.toFixed(2)} cukup tipis di atas batas. Perkuat latihan soal
-            pada topik yang sering muncul di UKNPDPD CBT untuk meningkatkan keyakinan.`;
+        recBox.innerHTML = `<strong>🟡 Prediksi LULUS, peluang masih dapat ditingkatkan (${probPct}%) · Model ${mLabel}</strong>
+            Nilai CBT prediksi ${predCbt.toFixed(2)} tipis di atas batas. Perkuat latihan soal pada topik-topik yang sering muncul di UKNPDPD CBT.`;
     } else {
         recBox.className = 'recommendation';
-        recBox.innerHTML = `<strong>🔴 Prediksi TIDAK LULUS — dibutuhkan peningkatan signifikan</strong>
-            Nilai CBT prediksi ${predCbt.toFixed(2)} masih di bawah batas kelulusan ${PASS_THRESHOLD}.<br>
-            • <strong>Nilai TOI rendah?</strong> → Perkuat pemahaman konsep dasar klinis.<br>
-            • <strong>Nilai TOA rendah?</strong> → Perbanyak latihan soal AIPKI dan diskusi kelompok.<br>
-            • Tingkatkan frekuensi tryout dan analisis secara mendalam setiap soal yang salah.`;
+        let rec = `<strong>🔴 Prediksi TIDAK LULUS — dibutuhkan peningkatan signifikan · Model ${mLabel}</strong>
+            Nilai CBT prediksi ${predCbt.toFixed(2)} masih di bawah batas kelulusan ${PASS_THRESHOLD}.<br>`;
+        if (mode === 'toi' || mode === 'both') rec += `• <strong>Nilai TOI ${toiVal}</strong> → Perkuat pemahaman konsep dasar klinis.<br>`;
+        if (mode === 'toa' || mode === 'both') rec += `• <strong>Nilai TOA ${toaVal}</strong> → Perbanyak latihan soal AIPKI dan diskusi kelompok.<br>`;
+        rec += `• Tingkatkan frekuensi tryout dan analisis mendalam setiap soal yang salah.`;
+        recBox.innerHTML = rec;
     }
 
-    const rs = document.getElementById('resultSection');
-    rs.className = 'result-section visible';
-    rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('resultSection').className = 'result-section visible';
+    document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// ─── Charts ──────────────────────────────────────────────────────────────────
+// ─── Charts ───────────────────────────────────────────────────────────────────
 function drawCharts() {
-    const pointColors  = cbts.map(c => c >= PASS_THRESHOLD ? 'rgba(39,174,96,.65)' : 'rgba(231,76,60,.65)');
-    const pointBorders = cbts.map(c => c >= PASS_THRESHOLD ? '#27ae60' : '#e74c3c');
+    const pc = cbts.map(c => c >= PASS_THRESHOLD ? 'rgba(39,174,96,.65)' : 'rgba(231,76,60,.65)');
+    const pb = cbts.map(c => c >= PASS_THRESHOLD ? '#27ae60' : '#e74c3c');
 
-    // TOI vs CBT
     chartToi = new Chart(document.getElementById('chartToi'), {
         type: 'scatter',
-        data: {
-            datasets: [
-                {
-                    label: 'Mahasiswa',
-                    data: DATASET.map(d => ({ x: d[1], y: d[3] })),
-                    backgroundColor: pointColors,
-                    borderColor: pointBorders,
-                    pointRadius: 5, pointHoverRadius: 7,
-                },
-                {
-                    label: `Batas Lulus (${PASS_THRESHOLD})`,
-                    data: [{ x: minCbt - 5, y: PASS_THRESHOLD }, { x: maxCbt + 5, y: PASS_THRESHOLD }],
-                    type: 'line',
-                    borderColor: '#e74c3c',
-                    borderDash: [6, 3],
-                    borderWidth: 1.5,
-                    pointRadius: 0,
-                    fill: false,
-                },
-                {
-                    label: 'Prediksi Anda ★',
-                    data: [],
-                    backgroundColor: '#f39c12',
-                    borderColor: '#d68910',
-                    pointRadius: 10,
-                    pointStyle: 'star',
-                }
-            ]
-        },
-        options: makeScatterOptions('Nilai TOI', 'Nilai CBT UKNPDPD')
+        data: { datasets: [
+            { label: 'Mahasiswa', data: DATASET.map(d => ({x: d[1], y: d[3]})), backgroundColor: pc, borderColor: pb, pointRadius: 5, pointHoverRadius: 7 },
+            { label: 'Batas Lulus', data: [{x:40,y:PASS_THRESHOLD},{x:85,y:PASS_THRESHOLD}], type:'line', borderColor:'#e74c3c', borderDash:[6,3], borderWidth:1.5, pointRadius:0, fill:false },
+            { label: 'Prediksi Anda ★', data: [], backgroundColor: '#f39c12', borderColor: '#d68910', pointRadius: 10, pointStyle: 'star' }
+        ]},
+        options: scatterOpts('Nilai TOI', 'Nilai CBT UKNPDPD')
     });
 
-    // TOA vs CBT
     chartToa = new Chart(document.getElementById('chartToa'), {
         type: 'scatter',
-        data: {
-            datasets: [
-                {
-                    label: 'Mahasiswa',
-                    data: DATASET.map(d => ({ x: d[2], y: d[3] })),
-                    backgroundColor: pointColors,
-                    borderColor: pointBorders,
-                    pointRadius: 5, pointHoverRadius: 7,
-                },
-                {
-                    label: `Batas Lulus (${PASS_THRESHOLD})`,
-                    data: [{ x: minCbt - 5, y: PASS_THRESHOLD }, { x: maxCbt + 5, y: PASS_THRESHOLD }],
-                    type: 'line',
-                    borderColor: '#e74c3c',
-                    borderDash: [6, 3],
-                    borderWidth: 1.5,
-                    pointRadius: 0,
-                    fill: false,
-                },
-                {
-                    label: 'Prediksi Anda ★',
-                    data: [],
-                    backgroundColor: '#f39c12',
-                    borderColor: '#d68910',
-                    pointRadius: 10,
-                    pointStyle: 'star',
-                }
-            ]
-        },
-        options: makeScatterOptions('Nilai TOA', 'Nilai CBT UKNPDPD')
+        data: { datasets: [
+            { label: 'Mahasiswa', data: DATASET.map(d => ({x: d[2], y: d[3]})), backgroundColor: pc, borderColor: pb, pointRadius: 5, pointHoverRadius: 7 },
+            { label: 'Batas Lulus', data: [{x:35,y:PASS_THRESHOLD},{x:88,y:PASS_THRESHOLD}], type:'line', borderColor:'#e74c3c', borderDash:[6,3], borderWidth:1.5, pointRadius:0, fill:false },
+            { label: 'Prediksi Anda ★', data: [], backgroundColor: '#f39c12', borderColor: '#d68910', pointRadius: 10, pointStyle: 'star' }
+        ]},
+        options: scatterOpts('Nilai TOA', 'Nilai CBT UKNPDPD')
     });
 
     // Histogram
-    const BIN_SIZE = 3, BIN_START = 60;
-    const numBins  = 12;
-    const bins     = Array.from({ length: numBins }, (_, i) => BIN_START + i * BIN_SIZE);
-    const hist     = new Array(numBins).fill(0);
-    cbts.forEach(c => {
-        const idx = Math.min(Math.floor((c - BIN_START) / BIN_SIZE), numBins - 1);
-        if (idx >= 0) hist[idx]++;
-    });
+    const BS = 3, BSTART = 60, NBINS = 12;
+    const bins = Array.from({length: NBINS}, (_, i) => BSTART + i * BS);
+    const hist = new Array(NBINS).fill(0);
+    cbts.forEach(c => { const idx = Math.min(Math.floor((c - BSTART) / BS), NBINS-1); if (idx >= 0) hist[idx]++; });
     chartHist = new Chart(document.getElementById('chartHist'), {
         type: 'bar',
-        data: {
-            labels: bins.map((b, i) => `${b}–${b + BIN_SIZE}`),
-            datasets: [{
-                label: 'Jumlah',
-                data: hist,
-                backgroundColor: bins.map(b => b < PASS_THRESHOLD ? 'rgba(231,76,60,.7)' : 'rgba(39,174,96,.7)'),
-                borderRadius: 4,
-                borderWidth: 1,
-                borderColor: bins.map(b => b < PASS_THRESHOLD ? '#e74c3c' : '#27ae60'),
-            }]
-        },
+        data: { labels: bins.map(b => `${b}–${b+BS}`), datasets: [{
+            label: 'Jumlah', data: hist, borderRadius: 4, borderWidth: 1,
+            backgroundColor: bins.map(b => b < PASS_THRESHOLD ? 'rgba(231,76,60,.7)' : 'rgba(39,174,96,.7)'),
+            borderColor:     bins.map(b => b < PASS_THRESHOLD ? '#e74c3c' : '#27ae60'),
+        }]},
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: { callbacks: { label: ctx => ` ${ctx.raw} mahasiswa` } }
-            },
-            scales: {
-                x: { title: { display: true, text: 'Rentang Nilai CBT' }, ticks: { maxRotation: 45 } },
-                y: { title: { display: true, text: 'Jumlah Mahasiswa' }, beginAtZero: true, ticks: { stepSize: 2 } }
-            }
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} mahasiswa` } } },
+            scales: { x: { title: { display: true, text: 'Rentang Nilai CBT' }, ticks: { maxRotation: 45 } }, y: { title: { display: true, text: 'Jumlah Mahasiswa' }, beginAtZero: true, ticks: { stepSize: 2 } } }
         }
     });
 
-    // Actual vs Predicted scatter
-    const errColors = predictions.map((p, i) => {
+    // Actual vs Predicted (default: both)
+    buildPredChart('both');
+}
+
+function buildPredChart(mode) {
+    const predsArr  = preds[mode];
+    const errColors = predsArr.map((p, i) => {
         const e = Math.abs(p - cbts[i]);
         return e < 3 ? 'rgba(39,174,96,.6)' : e < 7 ? 'rgba(243,156,18,.6)' : 'rgba(231,76,60,.6)';
     });
+
+    if (chartPred) { chartPred.destroy(); }
     chartPred = new Chart(document.getElementById('chartPred'), {
         type: 'scatter',
-        data: {
-            datasets: [
-                {
-                    label: 'Data',
-                    data: cbts.map((a, i) => ({ x: a, y: predictions[i] })),
-                    backgroundColor: errColors,
-                    borderColor: errColors.map(c => c.replace('.6', '1')),
-                    pointRadius: 5,
-                },
-                {
-                    label: 'Garis Ideal',
-                    data: [{ x: minCbt, y: minCbt }, { x: maxCbt, y: maxCbt }],
-                    type: 'line',
-                    borderColor: 'rgba(26,86,160,.5)',
-                    borderDash: [5, 3],
-                    borderWidth: 1.5,
-                    pointRadius: 0,
-                    fill: false,
-                }
-            ]
-        },
-        options: makeScatterOptions('Nilai CBT Aktual', 'Nilai CBT Prediksi')
+        data: { datasets: [
+            { label: 'Data', data: cbts.map((a, i) => ({x: a, y: predsArr[i]})), backgroundColor: errColors, borderColor: errColors.map(c => c.replace('.6','1')), pointRadius: 5 },
+            { label: 'Garis Ideal', data: [{x: minCbt, y: minCbt}, {x: maxCbt, y: maxCbt}], type: 'line', borderColor: 'rgba(26,86,160,.5)', borderDash: [5,3], borderWidth: 1.5, pointRadius: 0, fill: false }
+        ]},
+        options: scatterOpts('Nilai CBT Aktual', 'Nilai CBT Prediksi')
     });
 }
 
-function makeScatterOptions(xLabel, yLabel) {
+function updatePredChart() { buildPredChart(currentMode); }
+
+function scatterOpts(xLabel, yLabel) {
     return {
         responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: ctx => {
-                        const d = DATASET[ctx.dataIndex];
-                        if (d) return ` ${d[0]}: (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(2)})`;
-                        return ` (${ctx.parsed.x.toFixed(2)}, ${ctx.parsed.y.toFixed(2)})`;
-                    }
-                }
-            }
+        plugins: { legend: { display: false },
+            tooltip: { callbacks: { label: ctx => {
+                const d = DATASET[ctx.dataIndex];
+                return d ? ` ${d[0]}: (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(2)})` : ` (${ctx.parsed.x.toFixed(2)}, ${ctx.parsed.y.toFixed(2)})`;
+            }}}
         },
-        scales: {
-            x: { title: { display: true, text: xLabel } },
-            y: { title: { display: true, text: yLabel } }
-        }
+        scales: { x: { title: { display: true, text: xLabel } }, y: { title: { display: true, text: yLabel } } }
     };
 }
 
-function updateChartMarkers(toi, toa, predCbt) {
+function updateChartMarkers(mode, toiVal, toaVal, predCbt) {
     if (!chartToi || !chartToa) return;
-    chartToi.data.datasets[2].data = [{ x: toi, y: predCbt }];
-    chartToa.data.datasets[2].data = [{ x: toa, y: predCbt }];
-    chartToi.update();
-    chartToa.update();
+    if (mode !== 'toa') chartToi.data.datasets[2].data = [{ x: toiVal, y: predCbt }];
+    else                chartToi.data.datasets[2].data = [];
+    if (mode !== 'toi') chartToa.data.datasets[2].data = [{ x: toaVal, y: predCbt }];
+    else                chartToa.data.datasets[2].data = [];
+    chartToi.update(); chartToa.update();
 }
 
-// ─── Data Table ───────────────────────────────────────────────────────────────
+// ─── Table ────────────────────────────────────────────────────────────────────
 function buildTable() {
-    const tbody = document.getElementById('tableBody');
+    rebuildTable();
+}
+
+function rebuildTable() {
+    const tbody  = document.getElementById('tableBody');
+    const predsArr = preds[currentMode];
+    tbody.innerHTML = '';
     DATASET.forEach((d, i) => {
         const pass = d[3] >= PASS_THRESHOLD;
-        const pred = predictions[i] !== undefined ? predictions[i].toFixed(2) : '–';
-        const err  = predictions[i] !== undefined ? Math.abs(predictions[i] - d[3]).toFixed(2) : '–';
+        const pred = predsArr[i] !== undefined ? predsArr[i].toFixed(2) : '–';
+        const err  = predsArr[i] !== undefined ? Math.abs(predsArr[i] - d[3]).toFixed(2) : '–';
         const tr   = document.createElement('tr');
         tr.innerHTML = `
-            <td>${i + 1}</td>
-            <td>${d[0]}</td>
-            <td>${d[1]}</td>
-            <td>${d[2]}</td>
+            <td>${i+1}</td><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td>
             <td><strong>${d[3].toFixed(2)}</strong></td>
             <td>${pred}</td>
             <td><small style="color:var(--muted)">±${err}</small></td>
@@ -1144,22 +999,13 @@ function buildTable() {
 function toggleTable() {
     const el  = document.getElementById('tableContainer');
     const btn = document.getElementById('tableToggleBtn');
-    if (el.style.display === 'none') {
-        el.style.display = 'block';
-        btn.textContent  = 'Sembunyikan Tabel Data ▲';
-    } else {
-        el.style.display = 'none';
-        btn.textContent  = 'Tampilkan Tabel Data ▼';
-    }
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    btn.textContent  = el.style.display === 'none' ? 'Tampilkan Tabel Data ▼' : 'Sembunyikan Tabel Data ▲';
 }
 
-// ─── Slider ↔ Input Sync ─────────────────────────────────────────────────────
-function syncSlider(which) {
-    document.getElementById(which + 'Slider').value = document.getElementById(which + 'Input').value;
-}
-function syncInput(which) {
-    document.getElementById(which + 'Input').value = document.getElementById(which + 'Slider').value;
-}
+// ─── Slider sync ─────────────────────────────────────────────────────────────
+function syncSlider(which) { document.getElementById(which+'Slider').value = document.getElementById(which+'Input').value; }
+function syncInput(which)  { document.getElementById(which+'Input').value  = document.getElementById(which+'Slider').value; }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.getElementById('toiInput').value  = 65;
@@ -1169,7 +1015,7 @@ document.getElementById('toaSlider').value = 65;
 
 buildAndTrain().catch(err => {
     console.error(err);
-    document.getElementById('statusText').textContent = 'Error saat melatih model: ' + err.message;
+    document.getElementById('statusText').textContent = 'Error: ' + err.message;
 });
 </script>
 </body>
