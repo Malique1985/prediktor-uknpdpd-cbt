@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediktor Kelulusan UKNPDPD CBT | FKIK UIN Malang</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary:    #1a56a0;
+            --primary-dk: #0f3a72;
+            --accent:     #27ae60;
+            --danger:     #e74c3c;
+            --warn:       #f39c12;
+            --bg:         #f0f4f8;
+            --card:       #ffffff;
+            --text:       #2c3e50;
+            --muted:      #7f8c8d;
+            --border:     #dde3ec;
+            --radius:     12px;
+            --shadow:     0 4px 20px rgba(0,0,0,.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: linear-gradient(135deg, var(--primary-dk) 0%, var(--primary) 100%);
+            color: #fff;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.2);
+        }
+        .header-icon {
+            width: 56px; height: 56px;
+            background: rgba(255,255,255,.15);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        header h1 { font-size: 1.45rem; font-weight: 700; line-height: 1.2; }
+        header p  { font-size: .85rem; opacity: .8; margin-top: 3px; }
+        .header-badge {
+            margin-left: auto;
+            background: rgba(255,255,255,.18);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: .8rem;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .header-badge strong { display: block; font-size: 1rem; }
+
+        /* ── Layout ── */
+        .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+        @media(max-width:900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+        }
+        @media(max-width:500px) {
+            .grid-4 { grid-template-columns: 1fr; }
+            header { padding: 16px; flex-wrap: wrap; }
+            .header-badge { margin-left: 0; width: 100%; }
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px 24px;
+            border: 1px solid var(--border);
+        }
+        .card-title {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 3px; height: 14px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--primary);
+        }
+        .stat-card .label { font-size: .75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+        .stat-card .value { font-size: 1.9rem; font-weight: 800; color: var(--primary); line-height: 1; margin: 5px 0 2px; }
+        .stat-card .sub   { font-size: .75rem; color: var(--muted); }
+        .stat-card.green  { border-top-color: var(--accent); }
+        .stat-card.green  .value { color: var(--accent); }
+        .stat-card.orange { border-top-color: var(--warn); }
+        .stat-card.orange .value { color: var(--warn); }
+
+        /* ── Training Progress ── */
+        .training-status {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .progress-bar-wrap {
+            background: var(--border);
+            border-radius: 99px;
+            height: 10px;
+            overflow: hidden;
+            margin: 10px 0 6px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #4a9eff);
+            border-radius: 99px;
+            transition: width .3s;
+            width: 0%;
+        }
+        .status-row { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; color: var(--muted); }
+        .status-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--warn);
+            margin-right: 6px;
+            animation: pulse 1.2s infinite;
+        }
+        .status-dot.done { background: var(--accent); animation: none; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+        /* ── Prediction Form ── */
+        .predict-form {
+            background: linear-gradient(135deg, #f8fbff, #eef4ff);
+            border: 1px solid #ccd9f0;
+        }
+        .input-group { margin-bottom: 16px; }
+        .input-group label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .input-group label span {
+            font-size: .75rem;
+            color: var(--muted);
+            font-weight: 400;
+            margin-left: 6px;
+        }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media(max-width:500px) { .input-row { grid-template-columns: 1fr; } }
+        .score-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .score-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,86,160,.12);
+        }
+        .range-hint { font-size: .7rem; color: var(--muted); margin-top: 4px; }
+        .input-slider { width: 100%; margin-top: 4px; accent-color: var(--primary); }
+        .btn-predict {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), #2874c5);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .15s;
+            box-shadow: 0 4px 14px rgba(26,86,160,.35);
+            margin-top: 6px;
+        }
+        .btn-predict:hover  { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,86,160,.45); }
+        .btn-predict:active { transform: translateY(0); }
+        .btn-predict:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+        /* ── Result Cards ── */
+        .result-section { display: none; }
+        .result-section.visible {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 16px;
+        }
+        @media(max-width:700px) { .result-section.visible { grid-template-columns: 1fr; } }
+        .result-card {
+            border-radius: var(--radius);
+            padding: 22px;
+            text-align: center;
+            border: 2px solid var(--border);
+            background: #fff;
+            box-shadow: var(--shadow);
+        }
+        .result-card .r-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+        .result-card .r-value { font-size: 2.6rem; font-weight: 900; margin: 8px 0 4px; line-height: 1; }
+        .result-card .r-sub   { font-size: .8rem; color: var(--muted); }
+        .result-card.lulus         { border-color: var(--accent); background: #f0faf4; }
+        .result-card.lulus         .r-value { color: var(--accent); }
+        .result-card.tidak-lulus   { border-color: var(--danger); background: #fef5f5; }
+        .result-card.tidak-lulus   .r-value { color: var(--danger); }
+        .result-card.neutral       { border-color: var(--primary); background: #f0f5ff; }
+        .result-card.neutral       .r-value { color: var(--primary); }
+        .result-card.warn          { border-color: var(--warn); background: #fffbf0; }
+        .result-card.warn          .r-value { color: var(--warn); }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 99px;
+            font-weight: 700;
+            font-size: .95rem;
+            margin-top: 8px;
+        }
+        .badge-lulus { background: var(--accent); color: #fff; }
+        .badge-tidak { background: var(--danger); color: #fff; }
+
+        /* ── Recommendation ── */
+        .recommendation {
+            background: #fffbf0;
+            border: 1px solid #f0d080;
+            border-left: 4px solid var(--warn);
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: .85rem;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+        .recommendation.good {
+            background: #f0faf4;
+            border-color: #a8dfc0;
+            border-left-color: var(--accent);
+        }
+        .recommendation strong { display: block; margin-bottom: 6px; font-size: .9rem; }
+
+        /* ── Charts ── */
+        .chart-wrap { position: relative; height: 280px; }
+
+        /* ── Model Metrics ── */
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: .86rem;
+        }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-row .name { color: var(--muted); }
+        .metric-row .val  { font-weight: 700; color: var(--text); }
+        .metric-row .val.good { color: var(--accent); }
+
+        /* ── Data Table ── */
+        .table-wrap {
+            overflow-x: auto;
+            max-height: 420px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+        thead th {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        tbody tr:nth-child(even) { background: #f8fafd; }
+        tbody tr:hover { background: #eef3fb; }
+        tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+        .pill {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+        .pill-lulus { background: #d4f4e3; color: #1a7a43; }
+        .pill-tidak { background: #fde0dc; color: #c0392b; }
+
+        /* ── Toggle ── */
+        .toggle-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: .78rem;
+            cursor: pointer;
+            color: var(--primary);
+            margin-left: auto;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .toggle-btn:hover { background: var(--bg); }
+
+        /* ── Section spacing ── */
+        section + section { margin-top: 24px; }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title .icon { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-icon">🩺</div>
+    <div>
+        <h1>Prediktor Kelulusan UKNPDPD CBT</h1>
+        <p>Berbasis Machine Learning (Neural Network) · FKIK UIN Maulana Malik Ibrahim Malang</p>
+    </div>
+    <div class="header-badge">
+        <span>Data Pelatihan</span>
+        <strong>162 Mahasiswa</strong>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Training Status -->
+    <div class="training-status" id="trainingCard">
+        <div class="status-row">
+            <div>
+                <span class="status-dot" id="statusDot"></span>
+                <strong id="statusText">Memuat dan melatih model...</strong>
+            </div>
+            <span id="epochLabel" style="font-size:.82rem;color:var(--muted)">Epoch 0 / 300</span>
+        </div>
+        <div class="progress-bar-wrap">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="status-row">
+            <span id="lossLabel" style="font-size:.78rem">Loss: –</span>
+            <span id="timeLabel" style="font-size:.78rem">Waktu: –</span>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <section>
+        <div class="grid-4">
+            <div class="stat-card">
+                <div class="label">Total Data</div>
+                <div class="value">162</div>
+                <div class="sub">Mahasiswa Profesi Dokter</div>
+            </div>
+            <div class="stat-card green">
+                <div class="label">Tingkat Kelulusan</div>
+                <div class="value" id="passRateStat">–</div>
+                <div class="sub">CBT ≥ 66 (batas lulus)</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="label">Rata-rata Nilai CBT</div>
+                <div class="value" id="avgCbtStat">–</div>
+                <div class="sub" id="minMaxCbtStat">Min – Maks: –</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Akurasi Model (R²)</div>
+                <div class="value" id="r2Stat">–</div>
+                <div class="sub">Koefisien Determinasi</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Form + Metrics -->
+    <section>
+        <div class="grid-2">
+
+            <!-- Left: Prediction Form -->
+            <div class="card predict-form">
+                <div class="card-title">Input Nilai & Prediksi</div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Nilai TOI <span>(Tryout Internal)</span></label>
+                        <input type="number" class="score-input" id="toiInput"
+                               min="0" max="100" step="0.5" placeholder="cth. 68.5"
+                               oninput="syncSlider('toi')">
+                        <input type="range" class="input-slider" id="toiSlider"
+                               min="30" max="100" step="0.5" value="65"
+                               oninput="syncInput('toi')">
+                        <div class="range-hint">Rentang dataset: 42 – 81.5</div>
+                    </div>
+                    <div class="input-group">
+                        <label>Nilai TOA <span>(Tryout AIPKI)</span></label>
+                        <input type="number" class="score-input" id="toaInput"
+                               min="0" max="100" step="0.5" placeholder="cth. 65.0"
+                               oninput="syncSlider('toa')">
+                        <input type="range" class="input-slider" id="toaSlider"
+                               min="30" max="100" step="0.5" value="65"
+                               oninput="syncInput('toa')">
+                        <div class="range-hint">Rentang dataset: 39.5 – 84</div>
+                    </div>
+                </div>
+                <button class="btn-predict" id="btnPredict" onclick="predict()" disabled>
+                    ⏳ Menunggu model selesai dilatih...
+                </button>
+            </div>
+
+            <!-- Right: Model Info & Metrics -->
+            <div class="card">
+                <div class="card-title">Performa & Detail Model</div>
+                <div class="metric-row">
+                    <span class="name">Algoritma</span>
+                    <span class="val">Neural Network (TF.js)</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Arsitektur Layer</span>
+                    <span class="val">2 → 32 → 16 → 1</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Optimizer / LR</span>
+                    <span class="val">Adam · 0.005</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Loss Function</span>
+                    <span class="val">Mean Squared Error</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">R² Score</span>
+                    <span class="val good" id="r2Val">Menghitung…</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">MAE (Mean Abs Error)</span>
+                    <span class="val" id="maeVal">Menghitung…</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">RMSE</span>
+                    <span class="val" id="rmseVal">Menghitung…</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Korelasi TOI–CBT</span>
+                    <span class="val good" id="corrToi">–</span>
+                </div>
+                <div class="metric-row">
+                    <span class="name">Korelasi TOA–CBT</span>
+                    <span class="val good" id="corrToa">–</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prediction Result -->
+    <section>
+        <div class="section-title"><span class="icon">📊</span>Hasil Prediksi</div>
+        <div class="result-section" id="resultSection">
+            <div class="result-card neutral" id="resCardCbt">
+                <div class="r-label">Prediksi Nilai CBT</div>
+                <div class="r-value" id="resCbt">–</div>
+                <div class="r-sub">Batas kelulusan: 66.00</div>
+            </div>
+            <div class="result-card" id="resCardProb">
+                <div class="r-label">Kemungkinan Lulus</div>
+                <div class="r-value" id="resProb">–</div>
+                <div class="r-sub" id="resProbSub">–</div>
+            </div>
+            <div class="result-card" id="resCardStatus">
+                <div class="r-label">Status Prediksi</div>
+                <div class="r-value" id="resStatus">–</div>
+                <div id="resBadge"></div>
+                <div class="r-sub" id="resStatusSub">–</div>
+            </div>
+        </div>
+        <div class="recommendation" id="recBox" style="display:none"></div>
+    </section>
+
+    <!-- Charts -->
+    <section>
+        <div class="section-title"><span class="icon">📈</span>Visualisasi Data</div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Scatter: TOI vs Nilai CBT UKNPDPD</div>
+                <div class="chart-wrap"><canvas id="chartToi"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Scatter: TOA vs Nilai CBT UKNPDPD</div>
+                <div class="chart-wrap"><canvas id="chartToa"></canvas></div>
+            </div>
+        </div>
+        <div class="grid-2" style="margin-top:20px">
+            <div class="card">
+                <div class="card-title">Distribusi Nilai CBT UKNPDPD (n=162)</div>
+                <div class="chart-wrap"><canvas id="chartHist"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Nilai Aktual vs Prediksi Model</div>
+                <div class="chart-wrap"><canvas id="chartPred"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Table -->
+    <section>
+        <div class="section-title"><span class="icon">📋</span>Data Pelatihan (162 Mahasiswa)</div>
+        <button class="toggle-btn" onclick="toggleTable()" id="tableToggleBtn">Tampilkan Tabel Data ▼</button>
+        <div id="tableContainer" style="display:none">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama</th>
+                            <th>TOI</th>
+                            <th>TOA</th>
+                            <th>CBT Aktual</th>
+                            <th>CBT Prediksi</th>
+                            <th>Error</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:32px;padding-bottom:32px">
+        Prediktor Kelulusan UKNPDPD CBT · FKIK UIN Maulana Malik Ibrahim Malang ·
+        162 Mahasiswa Program Profesi Dokter · Batas Kelulusan CBT ≥ 66
+    </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// DATASET — 162 mahasiswa profesi dokter FKIK UIN Malang
+// Format: [nama, TOI, TOA, CBT]  |  No.90 dikeluarkan (CBT tidak tersedia)
+// ─────────────────────────────────────────────────────────────────────────────
+const DATASET = [
+  ["Vicky Andrean",                       67.50, 71.50, 83.00],
+  ["Fahrurrozi Hari P",                   62.00, 56.00, 79.50],
+  ["Faiza Shema S",                       65.00, 67.00, 86.00],
+  ["Nike Aprilia",                        62.50, 69.50, 79.50],
+  ["Ricko Arie J",                        59.50, 63.50, 77.00],
+  ["Wawan Singgih P",                     71.50, 53.50, 69.00],
+  ["Yustika Permatasari",                 64.00, 66.00, 80.00],
+  ["Nurlita Fianti M",                    64.00, 75.50, 84.00],
+  ["Dzulmanira Syafni S.",                66.50, 64.50, 79.50],
+  ["Silvia Dewi M.",                      54.50, 62.50, 75.50],
+  ["Nadiya Putri H.",                     59.50, 54.50, 84.00],
+  ["Rithio Candraca",                     66.00, 61.50, 69.50],
+  ["Ach. Guntur Hermawan",                72.00, 69.00, 86.00],
+  ["Rido Angger K",                       67.50, 76.00, 83.50],
+  ["Andi Marwan D.",                      73.00, 51.50, 63.00],
+  ["Shanaz Hanani T.",                    63.50, 71.50, 81.50],
+  ["Qonitatul Yumna",                     57.00, 62.50, 71.00],
+  ["Aathifah",                            64.50, 76.00, 77.50],
+  ["Pandu Bagas R",                       59.00, 39.50, 65.50],
+  ["Tiara Yudha P",                       71.00, 78.00, 86.00],
+  ["Tsalsa Dzikria S",                    56.00, 64.50, 81.50],
+  ["Cholis Nur Aini",                     60.50, 64.50, 79.50],
+  ["Galih Indra P.",                      70.00, 59.50, 74.00],
+  ["Firnanda Tsalza A.",                  66.00, 68.00, 77.00],
+  ["M. Dicky Wahyu I.",                   59.50, 59.00, 76.00],
+  ["Indriana Mukhtar",                    59.50, 65.00, 82.00],
+  ["Andi Firdha R",                       58.00, 62.00, 79.00],
+  ["Basyar Adnani",                       66.00, 71.00, 83.00],
+  ["Norma Hanifah S.",                    58.00, 63.00, 79.00],
+  ["Siti Roziah Ria F.",                  65.50, 74.00, 79.50],
+  ["Putri Aulawiya R. H.",                62.00, 58.50, 81.00],
+  ["Alif Raudhah H. K.",                  62.50, 64.50, 73.00],
+  ["Aldita Husna V.",                     66.00, 74.50, 85.50],
+  ["Nimas Eka F.",                        59.00, 64.00, 76.00],
+  ["Ade Wildan R. F.",                    72.00, 63.00, 77.33],
+  ["Achmad Tri Sugiarto K. I. F.",        64.50, 75.50, 80.00],
+  ["Ira Resmi Melani",                    70.50, 70.50, 77.50],
+  ["Rislan Faiz M.",                      71.00, 77.50, 89.00],
+  ["Mohammad Reza R.",                    63.50, 75.50, 83.00],
+  ["Rizka Nurul H.",                      62.50, 60.50, 77.50],
+  ["Hafshah Yasmina A.",                  70.00, 79.00, 89.00],
+  ["Muhammad Farid W.",                   68.50, 66.00, 75.50],
+  ["Nila Aisyah Wahyuni",                 76.00, 76.00, 87.50],
+  ["Hanif Devara Amal H.",                58.50, 62.00, 64.00],
+  ["Safira Dita Arviana",                 76.00, 62.50, 82.00],
+  ["Maulidya Machdaniar",                 70.00, 66.00, 79.50],
+  ["Anindita Farah Y.",                   76.00, 74.50, 81.50],
+  ["Astrid Vira M.",                      72.00, 62.50, 81.50],
+  ["Hanun Shafira Q.",                    68.50, 63.50, 83.00],
+  ["Anggun Putri M. A.",                  62.00, 70.66, 73.33],
+  ["Irma Trianwarizha F.",                68.50, 55.50, 70.66],
+  ["Rizka Mar'Atus S.",                   65.50, 63.50, 69.33],
+  ["Aslin Nur Ainiyah",                   69.50, 61.50, 83.00],
+  ["Azka Faradiba A. H.",                 71.50, 66.00, 81.50],
+  ["Lailita Dwi Cahyanti",                76.50, 67.50, 88.00],
+  ["Luthfia Asyda Almas",                 67.50, 54.00, 77.50],
+  ["Zidnal Mafaz",                        81.50, 76.00, 88.00],
+  ["Dzulfikri Aulia A.",                  81.50, 84.00, 89.00],
+  ["Alya Labibah",                        78.50, 79.00, 88.00],
+  ["Walimatus Sya'Diyah",                 68.50, 57.50, 81.50],
+  ["Sely Maria Ulfah",                    72.50, 60.50, 66.00],
+  ["Dina Absharina W.",                   73.00, 59.00, 82.00],
+  ["Juwita Tri Linda P.",                 73.50, 69.50, 88.00],
+  ["Kamilatun Niamah",                    71.00, 57.50, 83.00],
+  ["Ahmad An'Im F.",                      71.00, 49.50, 74.00],
+  ["Husnul Khatimah",                     72.50, 69.00, 86.00],
+  ["Ika Nurnaila S.",                     67.50, 67.00, 77.33],
+  ["Nadya Dharmayanti",                   68.00, 58.50, 79.50],
+  ["Mukhamad Nur Kholis",                 73.50, 70.50, 79.00],
+  ["Naufal Rabbani",                      74.50, 63.00, 80.00],
+  ["Dwiana Galuh C. K.",                  69.00, 67.50, 86.00],
+  ["Sulistya Maharani",                   70.50, 61.00, 74.00],
+  ["Miftahul Huda N",                     75.00, 70.50, 78.66],
+  ["Fadilah Istiapalja (A)",              71.50, 70.50, 81.33],
+  ["Ektina Naura Barbara Ulfa",           70.50, 66.00, 79.33],
+  ["Syanindita Puspa Wardhani",           76.00, 82.00, 86.66],
+  ["Khilmi Ainun Nadliroh",               76.50, 73.50, 86.00],
+  ["Mutiara Nor A",                       75.50, 72.50, 85.33],
+  ["Nur Iedha Tertiana",                  74.50, 75.50, 85.33],
+  ["Fahriza Abid Sonia",                  75.50, 74.00, 84.66],
+  ["Al Mazida Fauzil Aishaqeena",         78.00, 79.00, 84.00],
+  ["Decitia Nisa Azzahra",                72.50, 68.50, 79.33],
+  ["Zuraida Ahadiyah Bulqies",            76.50, 72.50, 84.66],
+  ["Tri Wahyu Prasetyo",                  70.50, 65.50, 78.00],
+  ["Mahya Nailul 'Azizah",               72.50, 70.50, 83.33],
+  ["Ilham Muhammad Faris",                67.50, 57.00, 62.00],
+  ["Rizkia Milladina Hidayatulloh",       68.00, 70.50, 72.66],
+  ["Fahras Widi Anggraeni",               66.00, 72.66, 80.66],
+  ["Risna Afiatur Rosyida",               66.00, 67.33, 88.00],
+  ["Amaliah 'Isyatun Mufidah",           62.00, 65.33, 87.33],
+  ["Muhammad Ikhlasul Amal",              68.00, 72.66, 82.66],
+  ["Gilfani Aulia Ramada",                47.00, 58.66, 69.33],
+  ["Sefira Maulida Filzah",               62.00, 62.00, 77.33],
+  ["Iqbala Nur Dieniah",                  63.00, 66.00, 80.00],
+  ["Alisa Sofyana",                       58.50, 64.66, 72.66],
+  ["Fadilah Istiapalja (B)",              60.50, 69.33, 80.66],
+  ["Retno Dewi Atmiyanti",                56.66, 54.00, 76.00],
+  ["Putri Indah Palupi",                  61.50, 64.66, 77.33],
+  ["Yulia Candra Dewi",                   58.00, 62.66, 79.33],
+  ["Millennia Zulfa Salsabila",           58.50, 68.00, 76.00],
+  ["Maulana Yusuf Zumariffirdaus",        45.00, 56.00, 72.00],
+  ["Tiara Annisa",                        44.50, 64.66, 73.33],
+  ["Husna Nur Ridha",                     62.50, 70.66, 79.33],
+  ["Meryta Ade Arofani",                  58.50, 64.00, 72.66],
+  ["Awwalatun Nur Khoiriah",              48.00, 52.00, 73.33],
+  ["Mohammad Daffa Athallah Fath",        67.00, 60.50, 80.66],
+  ["Meily Rahmalia Widjaya",              75.00, 82.00, 90.66],
+  ["Shalzanisa Dwianing Putri",           50.50, 50.00, 66.00],
+  ["Rahmi Annisaa",                       53.50, 64.66, 70.66],
+  ["Adhitya Wishnukresnanda",             49.00, 57.33, 68.66],
+  ["M. Aldyan Yudha Kusuma Putra",        50.00, 60.66, 73.33],
+  ["Vinsa Surya Amanda",                  55.00, 54.66, 74.66],
+  ["Nadiya Salma Kustiawan",              58.00, 60.66, 80.66],
+  ["Anis Khoirinnisa",                    58.50, 66.66, 76.00],
+  ["Muhammad Alfarizi",                   56.00, 64.00, 68.00],
+  ["Daru Darma Prasojo",                  52.00, 57.33, 76.66],
+  ["Dwi Wahyu Utami",                     65.50, 59.33, 78.00],
+  ["Septafani Kurnia Utami",              61.50, 62.00, 80.66],
+  ["Marissa Nur Khoviva",                 42.00, 42.50, 65.33],
+  ["Muhammad Kemal Jalaluddin",           70.50, 59.50, 78.66],
+  ["Ajwadussafwatulloh Luthfi Al Jabbar", 60.50, 65.33, 75.33],
+  ["Intan Nadiyah Rahma",                 68.00, 70.50, 82.00],
+  ["Ardellya Elfidaa Salsabila",          57.00, 71.33, 82.00],
+  ["Nur Fadilla Mansyur",                 47.00, 63.33, 72.66],
+  ["Cep Reza AlamWahid",                  66.50, 77.33, 86.66],
+  ["Falaq Agastya Perdana",               42.00, 60.00, 70.00],
+  ["Fildzah Ghaisani Alifah",             76.00, 71.33, 82.66],
+  ["Rasyidu Fabian Mashuri",              72.50, 70.00, 81.33],
+  ["Mokhamad Syifa' Haykal Azizi",        64.00, 70.00, 84.00],
+  ["Alfina Nindy Fannani",                75.00, 71.33, 93.33],
+  ["Mahasya Khafiralia",                  70.00, 68.00, 83.33],
+  ["Qanita Adzkia Novindra",              70.00, 66.00, 89.33],
+  ["Zaidah Maulidina",                    67.00, 71.33, 84.66],
+  ["Vivian Fahmanissa Nur Fatharani",     65.00, 71.33, 88.00],
+  ["Annisa Novia",                        54.50, 61.33, 71.33],
+  ["Hasna Fathin Nabila",                 71.00, 60.66, 76.00],
+  ["Mohamad Ahnaf Audris",                67.50, 66.00, 83.33],
+  ["Fayola Issalillah",                   60.50, 68.66, 84.66],
+  ["Aprilia Mawar Dani",                  72.50, 66.66, 89.33],
+  ["Rizki Nurun Nihar",                   69.50, 72.00, 88.00],
+  ["Dhiaz Taupiq Anwari",                 60.50, 65.33, 82.00],
+  ["Fitriyatul Badriyah",                 68.00, 64.00, 81.33],
+  ["Firdaus Silahudin Fauzi",             70.00, 59.33, 84.66],
+  ["Aulia Sri Nastiti Suwondo",           70.00, 68.66, 83.33],
+  ["Hafidha Camila Arif",                 75.50, 66.00, 84.00],
+  ["Usrin Amirawati",                     78.00, 72.00, 80.66],
+  ["Noor Roziq Ghulam Perdana",           65.50, 59.33, 74.66],
+  ["Nadia Alfi Syarifah",                 63.50, 66.66, 84.00],
+  ["Alfina Akhnes Febrianti",             71.50, 67.33, 84.00],
+  ["Yuwan Ihzudin Sumitro",               67.50, 74.00, 82.00],
+  ["Ade Triana Widowati",                 68.00, 62.66, 85.33],
+  ["Putih Indah Lestari",                 68.00, 71.33, 88.00],
+  ["Annisya Risqi Anggaraini",            78.50, 66.00, 86.00],
+  ["Naharin Dwi Indah Kusumaningrum",     68.50, 64.00, 76.00],
+  ["Kiki Rizqi Amalia",                   66.50, 58.00, 77.33],
+  ["Sinta Septerina Permatasari",         70.50, 70.66, 84.00],
+  ["Nahda Rihadatul 'Aisy",              69.00, 67.33, 84.66],
+  ["Muhamad Daffa Abhista Reviansyah",    70.00, 67.33, 76.00],
+  ["Moch. Endry Kurniawan",               68.00, 62.00, 77.33],
+  ["Rizqi Ayuning Tyas SM",               50.50, 60.00, 83.33],
+  ["Aldona Feronika",                     65.50, 64.66, 84.66],
+  ["Luthia Khairunisa",                   66.00, 67.33, 83.33],
+];
+
+const PASS_THRESHOLD = 66.0;
+const EPOCHS = 300;
+
+let tfModel       = null;
+let normParams    = {};
+let predictions   = [];
+let chartToi, chartToa, chartHist, chartPred;
+
+// ─── Basic Statistics ─────────────────────────────────────────────────────────
+const tois = DATASET.map(d => d[1]);
+const toas = DATASET.map(d => d[2]);
+const cbts = DATASET.map(d => d[3]);
+
+function mean(arr)  { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function std(arr)   {
+    const m = mean(arr);
+    return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
+}
+function pearsonCorr(x, y) {
+    const mx = mean(x), my = mean(y), sx = std(x), sy = std(y);
+    return x.reduce((a, xi, i) => a + (xi - mx) * (y[i] - my), 0) / (x.length * sx * sy);
+}
+
+const passCount   = cbts.filter(c => c >= PASS_THRESHOLD).length;
+const passRate    = (passCount / cbts.length * 100).toFixed(1);
+const avgCbt      = mean(cbts).toFixed(2);
+const minCbt      = Math.min(...cbts);
+const maxCbt      = Math.max(...cbts);
+const corrToiCbt  = pearsonCorr(tois, cbts);
+const corrToaCbt  = pearsonCorr(toas, cbts);
+
+document.getElementById('passRateStat').textContent   = passRate + '%';
+document.getElementById('avgCbtStat').textContent     = avgCbt;
+document.getElementById('minMaxCbtStat').textContent  = `Min–Maks: ${minCbt.toFixed(2)}–${maxCbt.toFixed(2)}`;
+document.getElementById('corrToi').textContent        = corrToiCbt.toFixed(4);
+document.getElementById('corrToa').textContent        = corrToaCbt.toFixed(4);
+
+// ─── Normalization ────────────────────────────────────────────────────────────
+function computeNormParams(arr) { return { mu: mean(arr), sigma: std(arr) }; }
+function normalize(v, p)   { return (v - p.mu) / p.sigma; }
+function denormalize(v, p) { return v * p.sigma + p.mu; }
+
+// ─── Build & Train TF.js Model ───────────────────────────────────────────────
+async function buildAndTrain() {
+    normParams.toi = computeNormParams(tois);
+    normParams.toa = computeNormParams(toas);
+    normParams.cbt = computeNormParams(cbts);
+
+    const xs = tf.tensor2d(DATASET.map(d => [
+        normalize(d[1], normParams.toi),
+        normalize(d[2], normParams.toa)
+    ]));
+    const ys = tf.tensor2d(DATASET.map(d => [
+        normalize(d[3], normParams.cbt)
+    ]));
+
+    tfModel = tf.sequential({
+        layers: [
+            tf.layers.dense({
+                units: 32, activation: 'relu', inputShape: [2],
+                kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
+            }),
+            tf.layers.dense({
+                units: 16, activation: 'relu',
+                kernelRegularizer: tf.regularizers.l2({ l2: 0.001 })
+            }),
+            tf.layers.dense({ units: 1 })
+        ]
+    });
+
+    tfModel.compile({
+        optimizer: tf.train.adam(0.005),
+        loss: 'meanSquaredError'
+    });
+
+    const startTime = Date.now();
+
+    await tfModel.fit(xs, ys, {
+        epochs: EPOCHS,
+        batchSize: 16,
+        shuffle: true,
+        callbacks: {
+            onEpochEnd: (epoch, logs) => {
+                const pct = ((epoch + 1) / EPOCHS * 100);
+                document.getElementById('progressBar').style.width = pct.toFixed(0) + '%';
+                document.getElementById('epochLabel').textContent  = `Epoch ${epoch + 1} / ${EPOCHS}`;
+                document.getElementById('lossLabel').textContent   = `Loss: ${logs.loss.toFixed(5)}`;
+                document.getElementById('timeLabel').textContent   = `Waktu: ${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+            }
+        }
+    });
+
+    // Generate predictions for all training samples
+    const predTensor = tfModel.predict(xs);
+    const predRaw    = await predTensor.data();
+    predictions      = Array.from(predRaw).map(v => denormalize(v, normParams.cbt));
+
+    xs.dispose(); ys.dispose(); predTensor.dispose();
+
+    // Compute evaluation metrics
+    const residuals = predictions.map((p, i) => p - cbts[i]);
+    const mae       = mean(residuals.map(r => Math.abs(r)));
+    const rmse      = Math.sqrt(mean(residuals.map(r => r * r)));
+    const ssTot     = cbts.reduce((a, c) => a + (c - mean(cbts)) ** 2, 0);
+    const ssRes     = residuals.reduce((a, r) => a + r * r, 0);
+    const r2        = 1 - ssRes / ssTot;
+
+    normParams.residualStd = std(residuals);
+
+    document.getElementById('r2Val').textContent   = r2.toFixed(4);
+    document.getElementById('maeVal').textContent  = mae.toFixed(3) + ' poin';
+    document.getElementById('rmseVal').textContent = rmse.toFixed(3) + ' poin';
+    document.getElementById('r2Stat').textContent  = r2.toFixed(3);
+
+    // Update training status
+    document.getElementById('statusDot').classList.add('done');
+    document.getElementById('statusText').textContent = 'Model selesai dilatih — siap melakukan prediksi';
+    document.getElementById('btnPredict').disabled    = false;
+    document.getElementById('btnPredict').textContent = '🔮 Prediksi Nilai CBT';
+
+    drawCharts();
+    buildTable();
+}
+
+// ─── Prediction ──────────────────────────────────────────────────────────────
+async function predict() {
+    const toi = parseFloat(document.getElementById('toiInput').value);
+    const toa = parseFloat(document.getElementById('toaInput').value);
+
+    if (isNaN(toi) || isNaN(toa) || toi < 0 || toi > 100 || toa < 0 || toa > 100) {
+        alert('Masukkan nilai TOI dan TOA yang valid (0 – 100).');
+        return;
+    }
+
+    const inputTensor = tf.tensor2d([[
+        normalize(toi, normParams.toi),
+        normalize(toa, normParams.toa)
+    ]]);
+    const outTensor = tfModel.predict(inputTensor);
+    const outRaw    = await outTensor.data();
+    inputTensor.dispose(); outTensor.dispose();
+
+    const predCbt = denormalize(outRaw[0], normParams.cbt);
+    const sigma   = normParams.residualStd;
+    const z       = (PASS_THRESHOLD - predCbt) / sigma;
+    const prob    = 1 - normalCDF(z);
+
+    showResult(toi, toa, predCbt, prob);
+    updateChartMarkers(toi, toa, predCbt);
+}
+
+// Standard normal CDF (Abramowitz & Stegun)
+function normalCDF(z) {
+    const sign = z < 0 ? -1 : 1;
+    const t    = 1 / (1 + 0.2316419 * Math.abs(z));
+    const poly = t * (0.319381530 + t * (-0.356563782 +
+                 t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+    const pdf  = Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI);
+    return 0.5 + sign * (0.5 - pdf * poly);
+}
+
+function showResult(toi, toa, predCbt, prob) {
+    const pass    = predCbt >= PASS_THRESHOLD;
+    const probPct = (prob * 100).toFixed(1);
+
+    document.getElementById('resCbt').textContent = predCbt.toFixed(2);
+
+    const probCard = document.getElementById('resCardProb');
+    document.getElementById('resProb').textContent    = probPct + '%';
+    document.getElementById('resProbSub').textContent = prob >= 0.9 ? 'Sangat Tinggi' :
+                                                         prob >= 0.7 ? 'Tinggi' :
+                                                         prob >= 0.5 ? 'Sedang' :
+                                                         prob >= 0.3 ? 'Rendah' : 'Sangat Rendah';
+    probCard.className = 'result-card ' +
+        (prob >= 0.7 ? 'lulus' : prob >= 0.4 ? 'warn' : 'tidak-lulus');
+
+    const statusCard = document.getElementById('resCardStatus');
+    document.getElementById('resStatus').textContent    = pass ? '✓ LULUS' : '✗ TIDAK LULUS';
+    document.getElementById('resStatusSub').textContent = `CBT prediksi: ${predCbt.toFixed(2)} (min: ${PASS_THRESHOLD})`;
+    document.getElementById('resBadge').innerHTML       =
+        `<span class="status-badge ${pass ? 'badge-lulus' : 'badge-tidak'}">
+            ${pass ? '🎓 Prediksi Lulus' : '⚠️ Perlu Peningkatan'}
+         </span>`;
+    statusCard.className = 'result-card ' + (pass ? 'lulus' : 'tidak-lulus');
+
+    const recBox = document.getElementById('recBox');
+    recBox.style.display = 'block';
+
+    if (pass && prob >= 0.80) {
+        recBox.className = 'recommendation good';
+        recBox.innerHTML = `<strong>✅ Prediksi LULUS dengan peluang tinggi (${probPct}%)</strong>
+            Nilai TOI ${toi} dan TOA ${toa} menghasilkan prediksi CBT ${predCbt.toFixed(2)} — di atas batas kelulusan.
+            Pertahankan strategi belajar yang sudah berjalan dan tetap konsisten latihan soal.`;
+    } else if (pass) {
+        recBox.className = 'recommendation good';
+        recBox.innerHTML = `<strong>🟡 Prediksi LULUS, namun peluang masih perlu ditingkatkan (${probPct}%)</strong>
+            Nilai CBT prediksi ${predCbt.toFixed(2)} cukup tipis di atas batas. Perkuat latihan soal
+            pada topik yang sering muncul di UKNPDPD CBT untuk meningkatkan keyakinan.`;
+    } else {
+        recBox.className = 'recommendation';
+        recBox.innerHTML = `<strong>🔴 Prediksi TIDAK LULUS — dibutuhkan peningkatan signifikan</strong>
+            Nilai CBT prediksi ${predCbt.toFixed(2)} masih di bawah batas kelulusan ${PASS_THRESHOLD}.<br>
+            • <strong>Nilai TOI rendah?</strong> → Perkuat pemahaman konsep dasar klinis.<br>
+            • <strong>Nilai TOA rendah?</strong> → Perbanyak latihan soal AIPKI dan diskusi kelompok.<br>
+            • Tingkatkan frekuensi tryout dan analisis secara mendalam setiap soal yang salah.`;
+    }
+
+    const rs = document.getElementById('resultSection');
+    rs.className = 'result-section visible';
+    rs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ─── Charts ──────────────────────────────────────────────────────────────────
+function drawCharts() {
+    const pointColors  = cbts.map(c => c >= PASS_THRESHOLD ? 'rgba(39,174,96,.65)' : 'rgba(231,76,60,.65)');
+    const pointBorders = cbts.map(c => c >= PASS_THRESHOLD ? '#27ae60' : '#e74c3c');
+
+    // TOI vs CBT
+    chartToi = new Chart(document.getElementById('chartToi'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Mahasiswa',
+                    data: DATASET.map(d => ({ x: d[1], y: d[3] })),
+                    backgroundColor: pointColors,
+                    borderColor: pointBorders,
+                    pointRadius: 5, pointHoverRadius: 7,
+                },
+                {
+                    label: `Batas Lulus (${PASS_THRESHOLD})`,
+                    data: [{ x: minCbt - 5, y: PASS_THRESHOLD }, { x: maxCbt + 5, y: PASS_THRESHOLD }],
+                    type: 'line',
+                    borderColor: '#e74c3c',
+                    borderDash: [6, 3],
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    fill: false,
+                },
+                {
+                    label: 'Prediksi Anda ★',
+                    data: [],
+                    backgroundColor: '#f39c12',
+                    borderColor: '#d68910',
+                    pointRadius: 10,
+                    pointStyle: 'star',
+                }
+            ]
+        },
+        options: makeScatterOptions('Nilai TOI', 'Nilai CBT UKNPDPD')
+    });
+
+    // TOA vs CBT
+    chartToa = new Chart(document.getElementById('chartToa'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Mahasiswa',
+                    data: DATASET.map(d => ({ x: d[2], y: d[3] })),
+                    backgroundColor: pointColors,
+                    borderColor: pointBorders,
+                    pointRadius: 5, pointHoverRadius: 7,
+                },
+                {
+                    label: `Batas Lulus (${PASS_THRESHOLD})`,
+                    data: [{ x: minCbt - 5, y: PASS_THRESHOLD }, { x: maxCbt + 5, y: PASS_THRESHOLD }],
+                    type: 'line',
+                    borderColor: '#e74c3c',
+                    borderDash: [6, 3],
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    fill: false,
+                },
+                {
+                    label: 'Prediksi Anda ★',
+                    data: [],
+                    backgroundColor: '#f39c12',
+                    borderColor: '#d68910',
+                    pointRadius: 10,
+                    pointStyle: 'star',
+                }
+            ]
+        },
+        options: makeScatterOptions('Nilai TOA', 'Nilai CBT UKNPDPD')
+    });
+
+    // Histogram
+    const BIN_SIZE = 3, BIN_START = 60;
+    const numBins  = 12;
+    const bins     = Array.from({ length: numBins }, (_, i) => BIN_START + i * BIN_SIZE);
+    const hist     = new Array(numBins).fill(0);
+    cbts.forEach(c => {
+        const idx = Math.min(Math.floor((c - BIN_START) / BIN_SIZE), numBins - 1);
+        if (idx >= 0) hist[idx]++;
+    });
+    chartHist = new Chart(document.getElementById('chartHist'), {
+        type: 'bar',
+        data: {
+            labels: bins.map((b, i) => `${b}–${b + BIN_SIZE}`),
+            datasets: [{
+                label: 'Jumlah',
+                data: hist,
+                backgroundColor: bins.map(b => b < PASS_THRESHOLD ? 'rgba(231,76,60,.7)' : 'rgba(39,174,96,.7)'),
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: bins.map(b => b < PASS_THRESHOLD ? '#e74c3c' : '#27ae60'),
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.raw} mahasiswa` } }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Rentang Nilai CBT' }, ticks: { maxRotation: 45 } },
+                y: { title: { display: true, text: 'Jumlah Mahasiswa' }, beginAtZero: true, ticks: { stepSize: 2 } }
+            }
+        }
+    });
+
+    // Actual vs Predicted scatter
+    const errColors = predictions.map((p, i) => {
+        const e = Math.abs(p - cbts[i]);
+        return e < 3 ? 'rgba(39,174,96,.6)' : e < 7 ? 'rgba(243,156,18,.6)' : 'rgba(231,76,60,.6)';
+    });
+    chartPred = new Chart(document.getElementById('chartPred'), {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Data',
+                    data: cbts.map((a, i) => ({ x: a, y: predictions[i] })),
+                    backgroundColor: errColors,
+                    borderColor: errColors.map(c => c.replace('.6', '1')),
+                    pointRadius: 5,
+                },
+                {
+                    label: 'Garis Ideal',
+                    data: [{ x: minCbt, y: minCbt }, { x: maxCbt, y: maxCbt }],
+                    type: 'line',
+                    borderColor: 'rgba(26,86,160,.5)',
+                    borderDash: [5, 3],
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    fill: false,
+                }
+            ]
+        },
+        options: makeScatterOptions('Nilai CBT Aktual', 'Nilai CBT Prediksi')
+    });
+}
+
+function makeScatterOptions(xLabel, yLabel) {
+    return {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: ctx => {
+                        const d = DATASET[ctx.dataIndex];
+                        if (d) return ` ${d[0]}: (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(2)})`;
+                        return ` (${ctx.parsed.x.toFixed(2)}, ${ctx.parsed.y.toFixed(2)})`;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: { title: { display: true, text: xLabel } },
+            y: { title: { display: true, text: yLabel } }
+        }
+    };
+}
+
+function updateChartMarkers(toi, toa, predCbt) {
+    if (!chartToi || !chartToa) return;
+    chartToi.data.datasets[2].data = [{ x: toi, y: predCbt }];
+    chartToa.data.datasets[2].data = [{ x: toa, y: predCbt }];
+    chartToi.update();
+    chartToa.update();
+}
+
+// ─── Data Table ───────────────────────────────────────────────────────────────
+function buildTable() {
+    const tbody = document.getElementById('tableBody');
+    DATASET.forEach((d, i) => {
+        const pass = d[3] >= PASS_THRESHOLD;
+        const pred = predictions[i] !== undefined ? predictions[i].toFixed(2) : '–';
+        const err  = predictions[i] !== undefined ? Math.abs(predictions[i] - d[3]).toFixed(2) : '–';
+        const tr   = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${d[0]}</td>
+            <td>${d[1]}</td>
+            <td>${d[2]}</td>
+            <td><strong>${d[3].toFixed(2)}</strong></td>
+            <td>${pred}</td>
+            <td><small style="color:var(--muted)">±${err}</small></td>
+            <td><span class="pill ${pass ? 'pill-lulus' : 'pill-tidak'}">${pass ? 'Lulus' : 'Tidak Lulus'}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function toggleTable() {
+    const el  = document.getElementById('tableContainer');
+    const btn = document.getElementById('tableToggleBtn');
+    if (el.style.display === 'none') {
+        el.style.display = 'block';
+        btn.textContent  = 'Sembunyikan Tabel Data ▲';
+    } else {
+        el.style.display = 'none';
+        btn.textContent  = 'Tampilkan Tabel Data ▼';
+    }
+}
+
+// ─── Slider ↔ Input Sync ─────────────────────────────────────────────────────
+function syncSlider(which) {
+    document.getElementById(which + 'Slider').value = document.getElementById(which + 'Input').value;
+}
+function syncInput(which) {
+    document.getElementById(which + 'Input').value = document.getElementById(which + 'Slider').value;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.getElementById('toiInput').value  = 65;
+document.getElementById('toiSlider').value = 65;
+document.getElementById('toaInput').value  = 65;
+document.getElementById('toaSlider').value = 65;
+
+buildAndTrain().catch(err => {
+    console.error(err);
+    document.getElementById('statusText').textContent = 'Error saat melatih model: ' + err.message;
+});
+</script>
+</body>
+</html>
