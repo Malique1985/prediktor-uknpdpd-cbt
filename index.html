@@ -73,6 +73,13 @@
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-right: 6px; animation: pulse 1.2s infinite; }
         .status-dot.done { background: var(--accent); animation: none; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .cache-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 8px; }
+        .cache-info { font-size: .75rem; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+        .cache-info .ci-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: .7rem; font-weight: 700; }
+        .ci-cached  { background: #d4f4e3; color: #1a7a43; }
+        .ci-fresh   { background: #fde0dc; color: #c0392b; }
+        .btn-retrain { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: .75rem; font-weight: 600; cursor: pointer; color: var(--muted); transition: all .2s; display: none; }
+        .btn-retrain:hover { border-color: var(--danger); color: var(--danger); background: #fef5f5; }
 
         /* ── Mode Selector ── */
         .mode-selector { display: flex; gap: 8px; margin-bottom: 18px; background: var(--bg); border-radius: 10px; padding: 4px; }
@@ -207,6 +214,14 @@
         <div class="status-row">
             <span id="lossLabel" style="font-size:.78rem">Loss: –</span>
             <span id="timeLabel" style="font-size:.78rem">Waktu: –</span>
+        </div>
+        <div class="cache-row">
+            <div class="cache-info">
+                Sumber model:
+                <span class="ci-badge" id="cacheBadge" style="display:none"></span>
+                <span id="cacheDetail" style="font-size:.72rem;color:var(--muted)"></span>
+            </div>
+            <button class="btn-retrain" id="btnRetrain" onclick="retrain()">🔄 Latih Ulang Model</button>
         </div>
     </div>
 
@@ -581,7 +596,8 @@ const DATASET = [
 ];
 
 const PASS_THRESHOLD = 66.0;
-const EPOCHS = 300;
+const EPOCHS         = 300;
+const CACHE_VER      = 'uknpdpd-v1';   // bump to invalidate old cache
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const models  = { toi: null, toa: null, both: null };
@@ -726,17 +742,115 @@ async function buildAndTrain() {
     }
 
     ys.dispose();
+    await saveToCache();
+    onReady('Selesai dilatih & disimpan ke cache');
+    showCacheStatus(false);
+}
 
-    // Done
+// ─── localStorage Cache ───────────────────────────────────────────────────────
+async function tryLoadCache() {
+    try {
+        const metaStr = localStorage.getItem(`${CACHE_VER}-meta`);
+        if (!metaStr) return false;
+        const meta = JSON.parse(metaStr);
+
+        // Load all 3 TF.js models from localStorage
+        models.toi  = await tf.loadLayersModel(`localstorage://${CACHE_VER}-model-toi`);
+        models.toa  = await tf.loadLayersModel(`localstorage://${CACHE_VER}-model-toa`);
+        models.both = await tf.loadLayersModel(`localstorage://${CACHE_VER}-model-both`);
+
+        // Restore norms, metrics, predictions
+        Object.keys(meta.norms).forEach(k => Object.assign(norms[k],   meta.norms[k]));
+        Object.keys(meta.metrics).forEach(k => Object.assign(metrics[k], meta.metrics[k]));
+        Object.keys(meta.preds).forEach(k => preds[k].push(...meta.preds[k]));
+
+        return true;
+    } catch (e) {
+        console.info('Cache tidak ditemukan atau rusak, akan latih ulang.', e);
+        return false;
+    }
+}
+
+async function saveToCache() {
+    try {
+        await models.toi.save(`localstorage://${CACHE_VER}-model-toi`);
+        await models.toa.save(`localstorage://${CACHE_VER}-model-toa`);
+        await models.both.save(`localstorage://${CACHE_VER}-model-both`);
+        // Store serialisable data (norms, metrics, predictions)
+        localStorage.setItem(`${CACHE_VER}-meta`, JSON.stringify({ norms, metrics, preds }));
+    } catch (e) {
+        console.warn('Gagal menyimpan ke localStorage:', e);
+    }
+}
+
+function clearCache() {
+    ['toi','toa','both'].forEach(k => {
+        try { tf.io.removeModel(`localstorage://${CACHE_VER}-model-${k}`); } catch(_) {}
+    });
+    localStorage.removeItem(`${CACHE_VER}-meta`);
+}
+
+function onReady(statusMsg) {
     document.getElementById('statusDot').classList.add('done');
-    document.getElementById('statusText').textContent = '3 model selesai dilatih — pilih mode & prediksi';
+    document.getElementById('statusText').textContent = statusMsg;
     document.getElementById('btnPredict').disabled    = false;
     document.getElementById('btnPredict').textContent = '🔮 Prediksi Nilai CBT';
     document.querySelectorAll('.mode-btn').forEach(b => b.disabled = false);
-
+    document.getElementById('btnRetrain').style.display = 'inline-block';
     updateMetricsDisplay();
     drawCharts();
     buildTable();
+}
+
+function showCacheStatus(fromCache) {
+    const badge  = document.getElementById('cacheBadge');
+    const detail = document.getElementById('cacheDetail');
+    badge.style.display = 'inline-block';
+    if (fromCache) {
+        badge.className = 'ci-badge ci-cached';
+        badge.textContent = '✓ Cache';
+        detail.textContent = '— Dimuat dari browser (instan)';
+    } else {
+        badge.className = 'ci-badge ci-fresh';
+        badge.textContent = '★ Baru';
+        detail.textContent = '— Model baru dilatih & disimpan ke cache';
+    }
+}
+
+async function retrain() {
+    if (!confirm('Hapus cache dan latih ulang 3 model dari awal?\n(Proses membutuhkan beberapa menit)')) return;
+    clearCache();
+    // Reset UI
+    document.getElementById('statusDot').classList.remove('done');
+    document.getElementById('statusText').textContent = 'Memuat dan melatih 3 model...';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('epochLabel').textContent  = 'Model 1/3 · Epoch 0/300';
+    document.getElementById('lossLabel').textContent   = 'Loss: –';
+    document.getElementById('timeLabel').textContent   = 'Waktu: –';
+    document.getElementById('btnPredict').disabled     = true;
+    document.getElementById('btnPredict').textContent  = '⏳ Menunggu model selesai dilatih...';
+    document.getElementById('btnRetrain').style.display = 'none';
+    document.getElementById('cacheBadge').style.display = 'none';
+    document.getElementById('cacheDetail').textContent  = '';
+    document.querySelectorAll('.mode-btn').forEach(b => b.disabled = true);
+    ['toi','toa','both'].forEach(k => { preds[k].length = 0; });
+    await buildAndTrain();
+}
+
+// ─── Init flow (cache → train) ────────────────────────────────────────────────
+async function init() {
+    document.getElementById('statusText').textContent = 'Mencari model tersimpan di browser...';
+    const cached = await tryLoadCache();
+    if (cached) {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('epochLabel').textContent  = 'Semua model dimuat dari cache';
+        document.getElementById('lossLabel').textContent   = '';
+        document.getElementById('timeLabel').textContent   = '';
+        onReady('✅ Model dimuat dari cache — langsung siap digunakan!');
+        showCacheStatus(true);
+    } else {
+        await buildAndTrain();
+    }
 }
 
 // ─── Mode switcher ────────────────────────────────────────────────────────────
@@ -1013,7 +1127,7 @@ document.getElementById('toiSlider').value = 65;
 document.getElementById('toaInput').value  = 65;
 document.getElementById('toaSlider').value = 65;
 
-buildAndTrain().catch(err => {
+init().catch(err => {
     console.error(err);
     document.getElementById('statusText').textContent = 'Error: ' + err.message;
 });
